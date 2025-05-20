@@ -52,6 +52,10 @@ CREATE TABLE "commandes" (
     CONSTRAINT "commandes_pkey" PRIMARY KEY ("id")
 );
 
+-- Create indexes on commandes foreign keys for better performance
+CREATE INDEX "commandes_utilisateurId_idx" ON "commandes"("utilisateurId");
+CREATE INDEX "commandes_offreId_idx" ON "commandes"("offreId");
+
 -- CreateTable
 CREATE TABLE "billets" (
     "id" TEXT NOT NULL,
