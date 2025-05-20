@@ -6,11 +6,14 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  extensions = [pgcrypto(map: "pgcrypto")]
 }
 
 enum UserRole {
@@ -32,7 +35,7 @@ enum CommandeStatut {
 }
 
 model User {
-  id         String     @id @default(uuid())
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email      String     @unique
   password   String
   nom        String
@@ -47,7 +50,7 @@ model User {
 }
 
 model Offre {
-  id          String     @id @default(uuid())
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   nom         String
   description String
   prix        Decimal    @db.Decimal(10, 2)
@@ -62,11 +65,11 @@ model Offre {
 }
 
 model Commande {
-  id              String          @id @default(uuid())
-  utilisateur     User            @relation(fields: [utilisateurId], references: [id])
-  utilisateurId   String
-  offre           Offre           @relation(fields: [offreId], references: [id])
-  offreId         String
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur     User            @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  utilisateurId   String          @db.Uuid
+  offre           Offre           @relation(fields: [offreId], references: [id], onDelete: Cascade)
+  offreId         String          @db.Uuid
   statut          CommandeStatut  @default(EN_ATTENTE)
   typeTransaction String?
   idTransaction   String?
@@ -77,17 +80,20 @@ model Commande {
 
   @@index([utilisateurId])
   @@index([offreId])
+  @@index([statut])
+  @@index([dateCommande])
   @@map("commandes")
 }
 
 model Billet {
-  id             String    @id @default(uuid())
-  commande       Commande  @relation(fields: [commandeId], references: [id])
-  commandeId     String
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  commande       Commande  @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  commandeId     String    @db.Uuid
   qrCode         String    @unique
   utilise        Boolean   @default(false)
   dateUtilisation DateTime?
   cleFinale      String?
 
+  @@index([utilise])
   @@map("billets")
 }
