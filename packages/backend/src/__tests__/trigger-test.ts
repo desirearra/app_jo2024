@@ -1,43 +1,45 @@
 import { PrismaClient } from '@prisma/client';
 
-async function testTriggers(): Promise<void> {
-  const prisma = new PrismaClient();
+describe('PostgreSQL Triggers', () => {
+  let prisma: PrismaClient;
 
-  try {
-    // Créer un utilisateur
-    console.log("Création d'un utilisateur...");
+  beforeAll(() => {
+    prisma = new PrismaClient();
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it('should automatically update updatedAt on record update', async () => {
+    // Create a test user
     const user = await prisma.user.create({
       data: {
-        email: `test${Date.now()}@test.com`,
-        password: 'password123',
+        email: 'test@example.com',
         nom: 'Test',
         prenom: 'User',
+        password: 'password123',
       },
     });
-    console.log('Utilisateur créé avec updatedAt:', user.updatedAt);
 
-    // Attendre 2 secondes
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Store the initial updatedAt
+    const initialUpdatedAt = user.updatedAt;
 
-    // Mettre à jour l'utilisateur
-    console.log("\nMise à jour de l'utilisateur...");
+    // Wait a second to ensure timestamp difference
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Update the user
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { nom: 'Test Updated' },
+      data: { nom: 'Updated' },
     });
-    console.log('Utilisateur mis à jour avec updatedAt:', updatedUser.updatedAt);
 
-    // Vérifier que les timestamps sont différents
-    console.log(
-      '\nDifférence entre les timestamps:',
-      updatedUser.updatedAt.getTime() - user.updatedAt.getTime(),
-      'ms'
-    );
-  } catch (error) {
-    console.error('Erreur:', error);
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+    // Clean up
+    await prisma.user.delete({
+      where: { id: user.id },
+    });
 
-testTriggers();
+    // Verify updatedAt was changed
+    expect(updatedUser.updatedAt.getTime()).toBeGreaterThan(initialUpdatedAt.getTime());
+  });
+});
