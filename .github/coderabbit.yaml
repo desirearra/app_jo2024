@@ -5,6 +5,13 @@ reviews:
   poem: false
   review_status: true
   collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    ignore_title_patterns:
+      - "^wip.*"
+      - "^draft.*"
+    draft: false
+    labels: ["needs-review", "ready-for-review"]
   path_filters:
     - "!**/node_modules/**"
     - "!**/dist/**"
@@ -21,6 +28,9 @@ reviews:
         - La gestion d'état
         - Les tests avec Jest et React Testing Library
         - L'accessibilité (a11y)
+        - La documentation des composants
+        - La gestion des erreurs
+        - Les performances
     - path: "**/*.test.{ts,tsx}"
       instructions: |
         Tests avec Jest et React Testing Library.
@@ -28,6 +38,8 @@ reviews:
         - La couverture des cas d'utilisation
         - L'utilisation des bonnes pratiques de test
         - Les assertions pertinentes
+        - Les mocks appropriés
+        - La clarté des descriptions de test
     - path: "**/*.css"
       instructions: |
         Utilisation de Tailwind CSS.
@@ -35,9 +47,23 @@ reviews:
         - La cohérence avec le design system
         - L'approche mobile-first
         - L'optimisation des classes
+        - La réutilisabilité
+        - L'accessibilité des styles
 
 chat:
   auto_reply: true
+  language: fr
+  review_comment_template: |
+    Merci pour ces changements ! Voici mon analyse :
+
+    ## Points positifs ✨
+    {{positives}}
+
+    ## Suggestions d'amélioration 🔧
+    {{suggestions}}
+
+    ## Questions 🤔
+    {{questions}}
 
 style:
   typescript:
@@ -50,6 +76,7 @@ style:
 
 suggestions:
   auto_apply: false
+  safe_changes: true
 
 ignore:
   - "**/*.md"
@@ -57,3 +84,8 @@ ignore:
   - "**/node_modules/**"
   - "**/coverage/**"
   - "**/.next/**"
+
+metrics:
+  enabled: true
+  tracker: github_issues
+  labels: ["metrics", "coderabbit"]
