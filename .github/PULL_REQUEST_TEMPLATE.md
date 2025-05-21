@@ -1,70 +1,78 @@
-# 🚀 Initialisation de Prisma et Configuration de la Base de Données
+# 🎯 Description de la Pull Request
 
-## Description
+## Type de changement
 
-Cette PR initialise Prisma et met en place la structure de base de données pour l'application e-billets JO 2024.
+<!-- Cochez les cases appropriées en remplaçant [ ] par [x] -->
+
+- [ ] ✨ Nouvelle fonctionnalité
+- [ ] 🐛 Correction de bug
+- [ ] 📝 Documentation
+- [ ] ♻️ Refactoring
+- [ ] 🎨 Style
+- [ ] ⚡️ Performance
+- [ ] 🧪 Tests
+- [ ] 🔧 Configuration
+- [ ] 🔐 Sécurité
+- [ ] 📦 Dépendances
+
+## Description des changements
+
+<!-- Décrivez clairement et concisément les changements apportés -->
 
 ### 📋 Changements effectués
 
-- Initialisation de Prisma dans le backend
-- Création du schéma de base de données avec les modèles :
-  - `User` (utilisateurs)
-  - `Offre` (offres de billets)
-  - `Commande` (commandes)
-  - `Billet` (billets)
-- Configuration des enums :
-  - `UserRole` (USER, ADMIN)
-  - `OffreType` (SOLO, DUO, FAMILLE)
-  - `CommandeStatut` (EN_ATTENTE, PAYEE, ANNULEE, REMBOURSEE)
-- Mise en place des relations entre les modèles
-- Création et application de la migration initiale
-- Mise à jour des dépendances Prisma vers la dernière version
+-
+-
+-
 
-### 🔐 Sécurité
+### 🔍 Contexte
 
-- Utilisation d'UUID pour les identifiants
-- Champs préparés pour le stockage sécurisé des clés
-- Contraintes d'unicité sur les emails et QR codes
-
-### 📊 Structure de la base de données
-
-```mermaid
-erDiagram
-    UTILISATEUR ||--o{ COMMANDE : passe
-    OFFRE ||--o{ COMMANDE : contient
-    COMMANDE ||--o{ BILLET : genere
-```
+<!-- Expliquez le contexte et la raison de ces changements -->
 
 ## 🧪 Tests
 
-- [ ] La migration s'applique correctement
-- [ ] Les modèles sont générés
-- [ ] La connexion à la base de données fonctionne
+<!-- Décrivez les tests effectués et comment tester les changements -->
+
+- [ ] Tests unitaires
+- [ ] Tests d'intégration
+- [ ] Tests manuels
+- [ ] Tests de performance
 
 ## 📝 Notes
 
-- La configuration de la base de données se fait via le fichier `.env`
-- Les variables d'environnement nécessaires ont été documentées
-- Le schéma est évolutif pour les futures fonctionnalités
+<!-- Ajoutez des notes supplémentaires, des captures d'écran ou des informations importantes -->
 
 ## 📚 Documentation
 
-- Le schéma de base de données est documenté dans `documentation.md`
-- Les commentaires dans `schema.prisma` expliquent les choix techniques
+<!-- Listez les changements de documentation effectués -->
+
+- [ ] Documentation du code
+- [ ] Documentation technique
+- [ ] Documentation utilisateur
+- [ ] Commentaires mis à jour
 
 ## ⚡ Breaking Changes
 
-Aucun (première initialisation)
+<!-- Listez les éventuels changements cassants -->
 
 ## 🔄 Dépendances
 
-- Mise à jour de Prisma vers la dernière version
-- Ajout de @prisma/client
+<!-- Listez les changements de dépendances -->
 
 ## 📋 Checklist
 
-- [x] Le code suit les standards du projet
-- [x] La documentation a été mise à jour
-- [x] Les migrations sont réversibles
-- [x] Les noms des tables sont en français
-- [x] Les contraintes de base de données sont en place
+- [ ] Le code suit les standards du projet
+- [ ] La documentation est à jour
+- [ ] Les tests passent
+- [ ] Le code a été revu
+- [ ] Les conflits sont résolus
+- [ ] Les variables d'environnement sont documentées
+- [ ] Les messages de commit sont clairs
+- [ ] La branche est à jour avec la branche cible
+
+## 🔗 Issues liées
+
+<!-- Listez les issues liées à cette PR -->
+
+Closes #
+Related to #
