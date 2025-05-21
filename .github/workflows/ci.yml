@@ -13,10 +13,10 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:16-alpine
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: jo2024
+          POSTGRES_PASSWORD: jo2024
           POSTGRES_DB: test_db
         ports:
           - 5432:5432
@@ -47,7 +47,8 @@ jobs:
       - name: 🧪 Tests
         run: npm test --workspaces
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
+          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
 
   build:
     name: 🏗️ Build
@@ -72,3 +73,5 @@ jobs:
 
       - name: 🏗️ Build Backend
         run: npm run build --workspace=packages/backend
+        env:
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
