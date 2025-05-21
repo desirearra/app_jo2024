@@ -10,12 +10,12 @@ export default function RootLayout() {
             JO 2024
           </Link>
           <div className="flex gap-4">
-            <Button variant="ghost" asChild>
-              <Link to="/events">Événements</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link to="/auth">Connexion</Link>
-            </Button>
+            <Link to="/events">
+              <Button variant="ghost">Événements</Button>
+            </Link>
+            <Link to="/auth">
+              <Button variant="outline">Connexion</Button>
+            </Link>
           </div>
         </nav>
       </header>
