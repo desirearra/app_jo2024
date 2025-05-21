@@ -1,0 +1,59 @@
+language: fr
+early_access: false
+reviews:
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/.next/**"
+    - "!**/coverage/**"
+  path_instructions:
+    - path: "**/*.{ts,tsx}"
+      instructions: |
+        Ce projet utilise TypeScript avec React.
+        Vérifiez :
+        - Le typage strict
+        - Les bonnes pratiques React (hooks, composants fonctionnels)
+        - La gestion d'état
+        - Les tests avec Jest et React Testing Library
+        - L'accessibilité (a11y)
+    - path: "**/*.test.{ts,tsx}"
+      instructions: |
+        Tests avec Jest et React Testing Library.
+        Vérifiez :
+        - La couverture des cas d'utilisation
+        - L'utilisation des bonnes pratiques de test
+        - Les assertions pertinentes
+    - path: "**/*.css"
+      instructions: |
+        Utilisation de Tailwind CSS.
+        Vérifiez :
+        - La cohérence avec le design system
+        - L'approche mobile-first
+        - L'optimisation des classes
+
+chat:
+  auto_reply: true
+
+style:
+  typescript:
+    eslint:
+      enabled: true
+      config_file: .eslintrc.js
+    prettier:
+      enabled: true
+      config_file: .prettierrc
+
+suggestions:
+  auto_apply: false
+
+ignore:
+  - "**/*.md"
+  - "**/dist/**"
+  - "**/node_modules/**"
+  - "**/coverage/**"
+  - "**/.next/**"
