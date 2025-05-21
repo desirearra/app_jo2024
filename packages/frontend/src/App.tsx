@@ -25,6 +25,11 @@ const router = createBrowserRouter([
   },
 ]);
 
+/**
+ * Fournit la configuration de routage principale de l'application React.
+ *
+ * Affiche le routeur avec les différentes pages et mises en page définies.
+ */
 function App() {
   return <RouterProvider router={router} />;
 }

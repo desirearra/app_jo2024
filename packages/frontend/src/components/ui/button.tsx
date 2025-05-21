@@ -32,6 +32,14 @@ const buttonVariants = cva(
   }
 );
 
+/**
+ * Composant bouton React personnalisable avec variantes de style et de taille.
+ *
+ * Permet de choisir parmi plusieurs styles visuels et tailles prédéfinis, et peut être rendu comme un élément différent via la propriété {@link asChild}.
+ *
+ * @param asChild - Si vrai, rend le composant enfant fourni au lieu d'un élément `<button>`, tout en conservant les styles du bouton.
+ * @returns Un bouton stylisé ou un composant enfant avec les styles de bouton appliqués.
+ */
 function Button({
   className,
   variant,

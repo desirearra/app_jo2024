@@ -1,3 +1,8 @@
+/**
+ * Affiche une page d'authentification avec un titre "Connexion / Inscription".
+ *
+ * Ce composant sert de point d'entrée visuel pour les utilisateurs souhaitant se connecter ou s'inscrire.
+ */
 export default function Auth() {
   return (
     <div className="container mx-auto p-4">

@@ -1,5 +1,10 @@
 import { Button } from '@/components/ui/button';
 
+/****
+ * Affiche la page d'accueil avec un titre et une sélection de boutons illustrant différents styles.
+ *
+ * Cette page présente le titre "Accueil - JO 2024" et six boutons de variantes différentes pour démontrer les options d'interface utilisateur disponibles.
+ */
 export default function Home() {
   return (
     <div className="container mx-auto p-4">

@@ -1,6 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Link, Outlet } from 'react-router-dom';
 
+/**
+ * Affiche la structure principale de l'application avec un en-tête de navigation et une zone de contenu pour les routes imbriquées.
+ *
+ * L'en-tête comprend un lien vers la page d'accueil et deux boutons de navigation vers les pages "Événements" et "Connexion". Le contenu principal affiche les composants des routes enfants via {@link Outlet}.
+ */
 export default function RootLayout() {
   return (
     <div className="min-h-screen bg-background">
