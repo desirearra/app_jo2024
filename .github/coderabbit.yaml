@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: fr
 early_access: false
 reviews:
@@ -12,6 +13,10 @@ reviews:
       - "^draft.*"
     draft: false
     labels: ["needs-review", "ready-for-review"]
+    base_branches:
+      - "main"
+      - "develop"
+      - "feature/*"
   path_filters:
     - "!**/node_modules/**"
     - "!**/dist/**"
