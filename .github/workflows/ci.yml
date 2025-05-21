@@ -44,6 +44,12 @@ jobs:
           npm run lint --workspaces
           npm run format:check --workspaces
 
+      - name: 🗃️ Appliquer les migrations Prisma
+        run: cd packages/backend && npx prisma migrate deploy && cd ../..
+        env:
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
+          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
+
       - name: 🧪 Tests
         run: npm test --workspaces
         env:
