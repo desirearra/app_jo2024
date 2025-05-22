@@ -23,6 +23,9 @@ reviews:
     - "!**/build/**"
     - "!**/.next/**"
     - "!**/coverage/**"
+    - "!**/.husky/**"
+    - "!**/.vscode/**"
+    - "!**/.github/**"
   path_instructions:
     - path: "**/*.{ts,tsx}"
       instructions: |
