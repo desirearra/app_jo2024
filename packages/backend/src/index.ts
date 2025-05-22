@@ -1,10 +1,10 @@
-import cors from 'cors';
+// Configuration des variables d'environnement
 import dotenv from 'dotenv';
+dotenv.config();
+
+import cors from 'cors';
 import express from 'express';
 import { config } from './config';
-
-// Configuration des variables d'environnement
-dotenv.config();
 
 const app = express();
 
@@ -19,9 +19,18 @@ app.get('/api/health', (_req, res) => {
 
 // Gestionnaire d'erreurs global
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  // En développement, on peut afficher plus de détails sur l'erreur
+  const isDev = config.nodeEnv === 'development';
+
+  // Logger l'erreur (utiliser un vrai logger en production)
+  if (isDev) {
+    // eslint-disable-next-line no-console
+    console.error('Erreur serveur:', err);
+  }
   res.status(500).json({
     status: 'error',
     message: 'Une erreur interne est survenue',
+    ...(isDev && { stack: err.stack, details: err.message }),
   });
 });
 

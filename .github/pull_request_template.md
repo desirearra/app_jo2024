@@ -87,3 +87,106 @@ Nouvelles dépendances ajoutées :
 <!-- Listez les issues liées à cette PR -->
 
 Related to FRONT-1
+
+# 🔒 Sécurisation CI et Améliorations Frontend
+
+## Type de changement
+
+- [x] 🛠️ Amélioration technique
+- [x] 📚 Documentation
+- [x] 🧪 Tests
+- [x] ⚙️ Configuration
+
+## Description
+
+Cette PR fait partie de la mise en place du frontend et se concentre sur la sécurisation des identifiants dans le CI et l'amélioration de la maintenabilité du code.
+
+### 🔐 Sécurité CI/CD
+
+- ✅ Utilisation des secrets GitHub pour les identifiants de base de données
+- ✅ Ajout de la sauvegarde des artefacts de build frontend
+- ✅ Configuration des filtres CodeRabbit pour une meilleure revue de code
+
+### 🎨 Améliorations Frontend
+
+- Refactorisation du composant Button pour une meilleure maintenabilité
+- Séparation des scripts de build et de vérification des types
+- Ajustement des seuils de couverture de tests pour un démarrage progressif
+
+### 📚 Documentation
+
+- Mise à jour complète du README frontend
+- Documentation de la structure des tests
+- Documentation des composants UI et des alias d'importation
+
+## 🧪 Tests
+
+- [x] Tests unitaires
+  - Tests du composant App
+  - Tests du trigger PostgreSQL
+
+## 📋 Checklist
+
+- [x] Le code suit les standards du projet
+- [x] La documentation est à jour
+- [x] Les tests passent
+- [x] Le code a été revu par CodeRabbit
+- [x] Les retours de CodeRabbit ont été traités
+
+## 🔄 Changements de Configuration
+
+### CI/CD
+
+```yaml
+- name: 📦 Sauvegarder les artefacts de build frontend
+  uses: actions/upload-artifact@v4
+  with:
+    name: frontend-build
+    path: packages/frontend/dist
+    retention-days: 7
+```
+
+### Jest
+
+```js
+coverageThreshold: {
+  global: {
+    branches: 70,
+    functions: 70,
+    lines: 75,
+    statements: 75,
+  },
+}
+```
+
+### Scripts
+
+```json
+{
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "vite build"
+  }
+}
+```
+
+## 📦 Dépendances
+
+Pas de nouvelles dépendances ajoutées.
+
+## 🔍 Points d'attention
+
+1. Les seuils de couverture ont été ajustés pour permettre un développement progressif
+2. La séparation du type-check et du build permet une meilleure granularité des tâches
+3. Le composant Button a été refactorisé pour une meilleure maintenabilité
+
+## 🔜 Prochaines étapes
+
+1. Continuer le développement des composants UI de base
+2. Améliorer le layout principal
+3. Mettre en place l'authentification
+4. Développer les pages principales
+
+## 📝 Notes supplémentaires
+
+Cette PR prépare le terrain pour la suite du développement frontend en mettant en place des bases solides en termes de qualité de code, de sécurité et de maintenabilité.
