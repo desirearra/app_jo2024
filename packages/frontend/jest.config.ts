@@ -1,7 +1,6 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
@@ -10,12 +9,7 @@ const config: Config = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        tsconfig: 'tsconfig.json',
-      },
-    ],
+    '^.+\\.(ts|tsx)$': 'babel-jest',
   },
   coveragePathIgnorePatterns: ['/node_modules/', '/__tests__/helpers/', '/__mocks__/'],
   testMatch: ['**/__tests__/**/*.test.ts?(x)'],
@@ -29,6 +23,12 @@ const config: Config = {
     },
   },
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  silent: false,
+  verbose: true,
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+  testTimeout: 10000,
 };
 
 export default config;
