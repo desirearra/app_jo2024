@@ -1,54 +1,111 @@
-# React + TypeScript + Vite
+# Frontend JO 2024 🏅
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application frontend pour le projet JO 2024, construite avec React, TypeScript, Vite et Shadcn UI.
 
-Currently, two official plugins are available:
+## 🚀 Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Framework** : React 18 avec TypeScript
+- **Build** : Vite
+- **UI** :
+  - Shadcn UI (composants)
+  - Tailwind CSS (styles)
+  - Radix UI (primitives)
+- **Tests** :
+  - Jest
+  - React Testing Library
+- **Qualité de code** :
+  - ESLint
+  - Prettier
+  - TypeScript strict mode
 
-## Expanding the ESLint configuration
+## 📦 Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Installation des dépendances
+npm install
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+# Démarrage en mode développement
+npm run dev
+
+# Build pour la production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🧪 Tests
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+Les tests sont organisés dans des dossiers `__tests__` à côté des composants qu'ils testent :
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
+```
+src/
+  components/
+    Button/
+      __tests__/
+        Button.test.tsx
+      Button.tsx
+  pages/
+    Home/
+      __tests__/
+        Home.test.tsx
+      Home.tsx
+```
+
+Pour exécuter les tests :
+
+```bash
+# Lancer tous les tests
+npm test
+
+# Mode watch
+npm run test:watch
+
+# Avec couverture
+npm run test:coverage
+```
+
+## 🔍 Scripts disponibles
+
+- `dev` : Démarre le serveur de développement
+- `build` : Build pour la production
+- `type-check` : Vérifie les types TypeScript
+- `lint` : Vérifie le code avec ESLint
+- `lint:fix` : Corrige automatiquement les erreurs ESLint
+- `format` : Formate le code avec Prettier
+- `test` : Lance les tests
+- `test:watch` : Lance les tests en mode watch
+- `test:coverage` : Lance les tests avec couverture
+
+## 📚 Structure du projet
+
+```
+src/
+  components/        # Composants réutilisables
+    ui/             # Composants UI de base (Shadcn)
+    layout/         # Composants de mise en page
+  pages/            # Pages de l'application
+  styles/           # Styles globaux et thème
+  lib/             # Utilitaires et helpers
+  hooks/           # Hooks React personnalisés
+  contexts/        # Contextes React
+  assets/          # Images, fonts, etc.
+```
+
+## 🎨 Composants UI
+
+Les composants UI sont basés sur Shadcn UI et utilisent Tailwind CSS pour le styling. Ils sont :
+
+- Accessibles (a11y)
+- Typés avec TypeScript
+- Testés
+- Personnalisables via Tailwind
+
+## 🔄 Alias d'importation
+
+Le projet utilise l'alias `@` pour les imports depuis le dossier `src` :
+
+```typescript
+// Au lieu de
+import { Button } from '../../../components/ui/button';
+
+// Utilisez
+import { Button } from '@/components/ui/button';
 ```
