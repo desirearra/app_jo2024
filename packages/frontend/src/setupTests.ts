@@ -37,9 +37,7 @@ class MockTextDecoder implements TextDecoder {
   }
 }
 
-// @ts-expect-error - Mock implementation
 global.TextEncoder = MockTextEncoder;
-// @ts-expect-error - Mock implementation
 global.TextDecoder = MockTextDecoder;
 
 // Désactiver les avertissements de console non pertinents
