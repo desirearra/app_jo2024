@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 
 // Mock data - à remplacer par l'appel API
@@ -30,46 +29,36 @@ const eventDetails = {
 // Mock data pour les pass disponibles
 const availablePasses = [
   {
-    id: 'pass-solo',
-    type: 'Pass Solo',
-    description: 'Accès pour 1 personne à cet événement',
+    id: 'pass-standard',
+    type: 'Pass Standard',
+    description: 'Place assise en tribune latérale',
     price: 95,
-    features: [
-      'Place assise numérotée',
-      'Accès à la session complète',
-      'Programme officiel offert',
-      'Accès aux zones de restauration',
-    ],
-    capacity: 1,
+    features: ['Place numérotée', 'Vue dégagée', 'Accès aux services de base'],
   },
   {
-    id: 'pass-duo',
-    type: 'Pass Duo',
-    description: 'Accès pour 2 personnes à cet événement',
-    price: 180,
+    id: 'pass-premium',
+    type: 'Pass Premium',
+    description: 'Place assise en tribune principale',
+    price: 195,
     features: [
-      '2 places assises côte à côte',
-      'Accès à la session complète',
-      '2 programmes officiels offerts',
-      'Accès aux zones de restauration',
-      'Réduction duo appliquée',
+      'Place numérotée premium',
+      'Vue imprenable',
+      'Accès salon VIP',
+      'Restauration incluse',
     ],
-    capacity: 2,
   },
   {
-    id: 'pass-familial',
-    type: 'Pass Familial',
-    description: 'Accès pour 4 personnes à cet événement',
-    price: 320,
+    id: 'pass-vip',
+    type: 'Pass VIP',
+    description: 'Expérience exclusive en loge',
+    price: 495,
     features: [
-      '4 places assises groupées',
-      'Accès à la session complète',
-      '4 programmes officiels offerts',
-      'Accès aux zones de restauration',
-      'Réduction famille appliquée',
-      "Accès prioritaire aux files d'attente",
+      'Loge privative',
+      'Service personnalisé',
+      'Restauration gastronomique',
+      'Accès coulisses',
+      'Parking VIP',
     ],
-    capacity: 4,
   },
 ];
 
@@ -90,67 +79,51 @@ export function EventDetailsPage() {
   console.log("Chargement des détails de l'événement:", id);
 
   return (
-    <div className="flex flex-col gap-12 min-h-screen bg-gradient-to-b from-white to-slate-50 py-12">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="grid grid-cols-1 lg:grid-cols-2 gap-12"
-        >
-          {/* Image Section */}
-          <div className="relative overflow-hidden rounded-2xl shadow-xl">
-            <img src={eventDetails.image} alt={eventDetails.title} className="w-full h-full" />
-          </div>
-
-          {/* Content Section */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-4xl font-bold text-slate-900 mb-2">{eventDetails.title}</h1>
-              <p className="text-lg text-slate-600">{eventDetails.longDescription}</p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-slate-700">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span>
-                  {eventDetails.date} à {eventDetails.time}
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+      {/* Hero Section */}
+      <div className="relative h-[50vh] overflow-hidden">
+        <img
+          src={eventDetails.image}
+          alt={eventDetails.title}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+        <div className="absolute inset-0 flex items-end">
+          <div className="container mx-auto px-4 pb-12">
+            <div className="max-w-4xl animate-fade-in-up">
+              <div className="mb-4">
+                <span className="inline-block px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-full">
+                  {eventDetails.category}
                 </span>
               </div>
-
-              <div className="flex items-center gap-2 text-slate-700">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span>{eventDetails.location}</span>
-              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                {eventDetails.title}
+              </h1>
+              <p className="text-xl text-white/90 max-w-2xl">{eventDetails.description}</p>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="border-t border-slate-200 pt-6">
-              <h2 className="text-xl font-semibold mb-4">Caractéristiques</h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {eventDetails.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2 text-slate-700">
+      {/* Informations détaillées */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Colonne de gauche - Description */}
+          <div className="lg:col-span-2 animate-fade-in-up [animation-delay:200ms]">
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">À propos de l&apos;événement</h2>
+            <p className="text-lg text-slate-600 mb-8">{eventDetails.longDescription}</p>
+
+            <h3 className="text-2xl font-bold text-slate-900 mb-4">Caractéristiques</h3>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {eventDetails.features.map((feature, index) => (
+                <li
+                  key={feature}
+                  className="flex items-center gap-3 animate-fade-in-up"
+                  style={{ animationDelay: `${400 + index * 100}ms` }}
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
                     <svg
-                      className="w-5 h-5 text-green-500"
+                      className="w-5 h-5 text-blue-600"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -162,37 +135,116 @@ export function EventDetailsPage() {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* <div className="border-t border-slate-200 pt-6">
-              <h2 className="text-xl font-semibold mb-4">Description détaillée</h2>
-              <p className="text-slate-600">{eventDetails.longDescription}</p>
-            </div> */}
+                  </div>
+                  <span className="text-slate-700">{feature}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-        </motion.div>
+
+          {/* Colonne de droite - Informations pratiques */}
+          <div className="lg:col-span-1 animate-fade-in-up [animation-delay:400ms]">
+            <div className="bg-white rounded-xl p-6 shadow-lg">
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Informations pratiques</h3>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Date et heure</p>
+                    <p className="text-slate-900">
+                      {new Date(eventDetails.date).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}{' '}
+                      à {eventDetails.time}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Lieu</p>
+                    <p className="text-slate-900">{eventDetails.location}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+                    <svg
+                      className="w-6 h-6 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-500">Places disponibles</p>
+                    <p className="text-slate-900">
+                      {eventDetails.availableSeats} sur {eventDetails.capacity}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Section des pass disponibles */}
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
+      {/* Section Pass */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="animate-fade-in-up [animation-delay:600ms]">
           <h2 className="text-3xl font-bold text-center text-slate-900 mb-8">
             Pass disponibles pour cet événement
           </h2>
           <div className="flex flex-col md:flex-row gap-6 justify-center">
-            {availablePasses.map(pass => (
-              <motion.div
+            {availablePasses.map((pass, index) => (
+              <div
                 key={pass.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex-1 max-w-md bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow"
+                className="flex-1 max-w-md bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow animate-fade-in-up"
+                style={{ animationDelay: `${800 + index * 100}ms` }}
               >
                 <div className="flex flex-col h-full">
                   <div className="flex justify-between items-start mb-4">
@@ -202,11 +254,11 @@ export function EventDetailsPage() {
                     </div>
                     <div className="text-2xl font-bold text-blue-600">{pass.price} €</div>
                   </div>
-                  <ul className="space-y-3 mb-6 flex-grow">
-                    {pass.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-slate-700">
+                  <ul className="flex-1 space-y-3 mb-6">
+                    {pass.features.map(feature => (
+                      <li key={feature} className="flex items-center gap-2 text-slate-700">
                         <svg
-                          className="w-5 h-5 text-blue-500 flex-shrink-0"
+                          className="w-5 h-5 text-green-500 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -218,21 +270,21 @@ export function EventDetailsPage() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span>{feature}</span>
+                        {feature}
                       </li>
                     ))}
                   </ul>
                   <Button
                     onClick={() => addToCart(pass.id)}
-                    className="w-full bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:scale-105 active:scale-95 transition-transform"
                   >
-                    Ajouter au panier
+                    Réserver
                   </Button>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

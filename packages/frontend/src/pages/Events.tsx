@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,43 +14,41 @@ interface Event {
 
 const events: Event[] = [
   {
-    id: 'evt-athletisme-1',
+    id: 'athletisme-100m',
     titre: 'Athlétisme au Stade de France',
     description:
-      "Les finales des épreuves d'athlétisme avec les meilleurs athlètes mondiaux dans ce temple mythique du sport français. Places limitées !",
-    date: '2024-08-01',
+      'Vivez les performances exceptionnelles des meilleurs athlètes mondiaux dans ce temple mythique du sport français. Places limitées !',
+    date: '2024-08-04',
     lieu: 'Stade de France',
     image:
       'https://plus.unsplash.com/premium_photo-1661868906940-5d8443acf49e?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     categorie: 'Athlétisme',
-    placesDisponibles: 200,
+    placesDisponibles: 150,
   },
   {
-    id: 'evt-natation-1',
+    id: 'natation-papillon',
     titre: 'Natation à La Défense Arena',
     description:
       "Soyez aux premières loges pour voir naître de nouveaux records olympiques dans la plus grande salle d'Europe !",
     date: '2024-08-02',
     lieu: 'Centre Aquatique',
-    image: 'https://images.unsplash.com/photo-1519315901367-f34ff9154487?q=80&w=1920',
+    image: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?q=80&w=1000',
     categorie: 'Natation',
-    placesDisponibles: 150,
+    placesDisponibles: 100,
   },
   {
-    id: 'evt-gymnastique-1',
+    id: 'gymnastique-sol',
     titre: 'Gymnastique à Bercy',
     description:
       "Réservez vos places pour assister aux performances spectaculaires des meilleurs gymnastes du monde à l'Accor Arena !",
-    date: '2024-08-03',
+    date: '2024-08-06',
     lieu: 'Arena Bercy',
     image:
       'https://plus.unsplash.com/premium_photo-1721755913670-5d20e710df72?q=80&w=1024&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     categorie: 'Gymnastique',
-    placesDisponibles: 100,
+    placesDisponibles: 80,
   },
 ];
-
-const categories = [...new Set(events.map(event => event.categorie))];
 
 export function EventsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -69,74 +66,60 @@ export function EventsPage() {
     <section className="flex flex-col h-screen bg-gradient-to-b from-white to-slate-50">
       <div className="flex-1 container mx-auto px-4 py-10">
         {/* En-tête de section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-center mb-16"
-        >
+        <div className="flex flex-col items-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl font-bold text-slate-900 mb-6">Événements JO Paris 2024</h2>
           <p className="text-xl text-slate-600 text-center max-w-3xl">
             Découvrez tous les événements des Jeux Olympiques et réservez vos places dès maintenant.
           </p>
-        </motion.div>
+        </div>
 
         {/* Filtres et recherche */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in-up [animation-delay:200ms]">
           <input
             type="text"
             placeholder="Rechercher un événement..."
-            className="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
+            className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <select
-            className="px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={selectedCategory}
             onChange={e => setSelectedCategory(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Toutes les catégories</option>
-            {categories.map(category => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
+            <option value="Athlétisme">Athlétisme</option>
+            <option value="Natation">Natation</option>
+            <option value="Gymnastique">Gymnastique</option>
           </select>
         </div>
 
-        {/* Section Sports */}
+        {/* Liste des événements */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.map(event => (
-            <motion.div
+          {filteredEvents.map((event, index) => (
+            <div
               key={event.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300"
+              className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
+              style={{ animationDelay: `${400 + index * 100}ms` }}
             >
               <div className="aspect-[4/3] overflow-hidden">
-                <motion.img
+                <img
                   src={event.image}
                   alt={event.titre}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 brightness-95 group-hover:brightness-100"
+                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500 brightness-95 hover:brightness-100"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-6 text-white">
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full">
-                  <span className="text-sm font-semibold text-slate-900">{event.categorie}</span>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-xl font-semibold text-slate-900">{event.titre}</h3>
+                  <span className="text-sm font-medium text-green-600">
+                    {event.placesDisponibles} places
+                  </span>
                 </div>
-                <h3 className="text-2xl font-bold mb-2">{event.titre}</h3>
-                <p className="text-sm text-white/90 line-clamp-2 mb-4">{event.description}</p>
+                <p className="text-slate-600 mb-4">{event.description}</p>
                 <div className="flex flex-col gap-2 mb-4">
-                  <div className="flex items-center text-white/90">
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -150,13 +133,8 @@ export function EventsPage() {
                       year: 'numeric',
                     })}
                   </div>
-                  <div className="flex items-center text-white/90">
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -173,37 +151,27 @@ export function EventsPage() {
                     {event.lieu}
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="self-start px-6 py-2.5 bg-white text-slate-900 rounded-full text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors"
+                <Link
+                  to={`/evenements/${event.id}`}
+                  className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  En savoir plus
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <Link to={`/evenements/${event.id}`} className="flex items-center gap-2">
-                      <>
-                        Découvrir l&apos;événement
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </>
-                    </Link>
-                  </motion.button>
-                  <span className="text-sm text-white/90">
-                    {event.placesDisponibles} places disponibles
-                  </span>
-                </div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </Link>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

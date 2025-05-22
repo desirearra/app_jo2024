@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const sportsData = [
@@ -35,67 +34,53 @@ export function EventList() {
     <section className="flex flex-col bg-gradient-to-b from-white to-slate-50">
       <div className="flex-1 container mx-auto px-4 py-10">
         {/* En-tête de section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-center mb-16"
-        >
+        <div className="flex flex-col items-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl font-bold text-slate-900 mb-6">Participez aux événements</h2>
           <p className="text-xl text-slate-600 text-center max-w-3xl">
             Ne manquez pas l&apos;occasion unique d&apos; de participer aux événements sportifs les
             plus excitants du monde.
           </p>
-        </motion.div>
+        </div>
 
         {/* Section Sports */}
         <div className="flex flex-col md:flex-row gap-6 mb-16">
-          {sportsData.map(sport => (
-            <motion.div
+          {sportsData.map((sport, index) => (
+            <div
               key={sport.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: sport.delay }}
-              className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300"
+              className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
+              style={{ animationDelay: `${200 + index * 200}ms` }}
             >
               <div className="aspect-[4/3] overflow-hidden">
-                <motion.img
+                <img
                   src={sport.image}
                   alt={sport.title}
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 brightness-95 group-hover:brightness-100"
+                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500 brightness-95 hover:brightness-100"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-6 text-white">
-                <h3 className="text-2xl font-bold mb-2">{sport.title}</h3>
-                <p className="text-sm text-white/90 line-clamp-2 mb-4">{sport.description}</p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="self-start px-6 py-2.5 bg-white text-slate-900 rounded-full text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors"
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">{sport.title}</h3>
+                <p className="text-slate-600 mb-4">{sport.description}</p>
+                <Link
+                  to={`/evenements/${sport.id}`}
+                  className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  <Link to="/evenements" className="flex items-center gap-2">
-                    <>
-                      Découvrir l&apos;événement
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </>
-                  </Link>
-                </motion.button>
+                  En savoir plus
+                  <svg
+                    className="w-5 h-5 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </Link>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

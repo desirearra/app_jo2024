@@ -6,24 +6,29 @@ import { EventDetailsPage } from '@/pages/EventDetails';
 import { EventsPage } from '@/pages/Events';
 import { Home } from '@/pages/Home';
 import { OffersPage } from '@/pages/Offers';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+const router = createBrowserRouter([
+  {
+    element: <RootLayout />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/evenements', element: <EventsPage /> },
+      { path: '/evenements/:id', element: <EventDetailsPage /> },
+      { path: '/offres', element: <OffersPage /> },
+      { path: '/panier', element: <CartPage /> },
+      { path: '/auth', element: <AuthPage /> },
+      { path: '/auth/register', element: <AuthPage /> },
+    ],
+  },
+]);
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/evenements" element={<EventsPage />} />
-          <Route path="/evenements/:id" element={<EventDetailsPage />} />
-          <Route path="/offres" element={<OffersPage />} />
-          <Route path="/panier" element={<CartPage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/auth/register" element={<AuthPage />} />
-        </Route>
-      </Routes>
+    <>
+      <RouterProvider router={router} />
       <Toaster />
-    </Router>
+    </>
   );
 }
 

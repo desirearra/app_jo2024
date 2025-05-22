@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { CartWidget } from '@/components/ui/CartWidget';
-import { motion } from 'framer-motion';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 export default function RootLayout() {
@@ -15,53 +14,56 @@ export default function RootLayout() {
       <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <motion.img
+            <img
               src="https://www.olympics.com/images/static/b2p-images/logo_color.svg"
               alt="Logo JO Paris 2024"
-              className="h-8 w-auto"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
+              className="h-8 w-auto animate-fade-in hover:scale-105 transition-transform"
             />
-            <motion.span
-              className="text-lg font-semibold hidden sm:inline-block"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
+            <span className="text-lg font-semibold hidden sm:inline-block animate-fade-in-up [animation-delay:200ms]">
               Paris 2024
-            </motion.span>
+            </span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link to="/evenements">
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4">
               <Button
+                asChild
+                variant={isActive('/') ? 'default' : 'ghost'}
+                className="hover:scale-105 active:scale-95 transition-transform"
+              >
+                <Link to="/">Accueil</Link>
+              </Button>
+              <Button
+                asChild
                 variant={isActive('/evenements') ? 'default' : 'ghost'}
-                className="text-sm sm:text-base rounded-full"
+                className="hover:scale-105 active:scale-95 transition-transform"
               >
-                Événements
+                <Link to="/evenements">Événements</Link>
               </Button>
-            </Link>
-            <Link to="/offres">
               <Button
+                asChild
                 variant={isActive('/offres') ? 'default' : 'ghost'}
-                className="text-sm sm:text-base rounded-full"
+                className="hover:scale-105 active:scale-95 transition-transform"
               >
-                Offres
+                <Link to="/offres">Offres</Link>
               </Button>
-            </Link>
-            <CartWidget />
-            <Link to="/auth">
-              <Button variant="outline" className="text-sm sm:text-base rounded-full">
-                Connexion
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Button
+                asChild
+                variant={isActive('/auth') ? 'default' : 'ghost'}
+                className="hover:scale-105 active:scale-95 transition-transform"
+              >
+                <Link to="/auth">Connexion</Link>
               </Button>
-            </Link>
+              <CartWidget />
+            </div>
           </div>
         </nav>
       </header>
 
-      <main className="flex-1">
+      <main>
         <Outlet />
       </main>
 
