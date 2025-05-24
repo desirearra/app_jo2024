@@ -1,9 +1,16 @@
+import { AuthModal } from '@/components/auth/AuthModal';
 import { Button } from '@/components/ui/button';
 import { CartWidget } from '@/components/ui/CartWidget';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 export default function RootLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -50,13 +57,47 @@ export default function RootLayout() {
             </div>
 
             <div className="flex items-center gap-4">
-              <Button
-                asChild
-                variant={isActive('/auth') ? 'default' : 'ghost'}
-                className="hover:scale-105 active:scale-95 transition-transform"
-              >
-                <Link to="/auth">Connexion</Link>
-              </Button>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    className="hover:scale-105 active:scale-95 transition-transform"
+                    onClick={() => setAccountMenuOpen(v => !v)}
+                  >
+                    Mon compte
+                  </Button>
+                  {accountMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          navigate('/compte');
+                        }}
+                      >
+                        Profil & commandes
+                      </button>
+                      <button
+                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                        onClick={() => {
+                          setAccountMenuOpen(false);
+                          logout();
+                        }}
+                      >
+                        Se déconnecter
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="hover:scale-105 active:scale-95 transition-transform"
+                  onClick={() => setAuthOpen(true)}
+                >
+                  Connexion
+                </Button>
+              )}
               <CartWidget />
             </div>
           </div>
@@ -87,6 +128,7 @@ export default function RootLayout() {
           </div>
         </div>
       </footer>
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
     </div>
   );
 }

@@ -29,22 +29,15 @@ const passTypeOptions = [
   { value: 'day', label: 'Pass Journée' },
   { value: 'weekend', label: 'Pass Week-end' },
   { value: 'week', label: 'Pass Semaine' },
-  { value: 'competition', label: 'Pass Compétition' },
+  { value: 'special', label: 'Pass Spécial' },
 ];
 
 export function OfferFilters({ onFilterChange, filters }: OfferFiltersProps) {
   const handleChange = (key: keyof OfferFilters, value: string | number | undefined) => {
-    if (key === 'type' && value === 'all') {
-      onFilterChange({
-        ...filters,
-        type: undefined,
-      });
-    } else {
-      onFilterChange({
-        ...filters,
-        [key]: value,
-      });
-    }
+    onFilterChange({
+      ...filters,
+      [key]: value,
+    });
   };
 
   return (
@@ -63,7 +56,12 @@ export function OfferFilters({ onFilterChange, filters }: OfferFiltersProps) {
         <Label htmlFor="type">Type de pass</Label>
         <Select
           value={filters.type}
-          onValueChange={(value: string) => handleChange('type', value as PassType)}
+          onValueChange={(value: string) => {
+            const validPassTypes = ['day', 'weekend', 'week', 'special', 'all'];
+            if (validPassTypes.includes(value)) {
+              handleChange('type', value as PassType);
+            }
+          }}
         >
           <SelectTrigger>
             <SelectValue placeholder="Sélectionner un type" />

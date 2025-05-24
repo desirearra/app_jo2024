@@ -42,7 +42,9 @@ export function OfferCard({ offer, onAddToCart }: OfferCardProps) {
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">{offer.description}</p>
           <div className="flex items-center gap-2">
-            <Badge variant="outline">{offer.date}</Badge>
+            <Badge variant="outline">
+              <time dateTime={offer.date}>{offer.date}</time>
+            </Badge>
             {offer.location && <Badge variant="outline">{offer.location}</Badge>}
             {offer.sport && <Badge variant="outline">{offer.sport}</Badge>}
           </div>

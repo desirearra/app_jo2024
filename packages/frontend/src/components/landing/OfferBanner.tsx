@@ -12,7 +12,7 @@ const parisHighlights = [
   },
 ];
 
-export function OfferCTA() {
+export function OfferBanner() {
   return (
     <section className="flex flex-col bg-gradient-to-b from-white to-slate-50">
       <div className="flex-1 container mx-auto px-4 pb-10">
@@ -30,8 +30,12 @@ export function OfferCTA() {
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent flex flex-col justify-center p-12 text-white">
-              <h3 className="text-3xl md:text-4xl font-bold mb-4 max-w-2xl">{highlight.title}</h3>
-              <p className="text-xl text-white/90 max-w-2xl mb-8">{highlight.description}</p>
+              <h3 className="text-start text-3xl md:text-4xl font-bold mb-4 max-w-2xl">
+                {highlight.title}
+              </h3>
+              <p className="text-start text-xl text-white/90 max-w-2xl mb-8">
+                {highlight.description}
+              </p>
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <Link
                   to="/offres"
