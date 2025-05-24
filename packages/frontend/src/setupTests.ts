@@ -1,4 +1,15 @@
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+
+// Mock pour crypto.randomUUID (pas disponible dans jsdom)
+Object.defineProperty(global, 'crypto', {
+  value: {
+    randomUUID: () => 'mock-uuid-' + Math.random().toString(36).substring(2, 15),
+  },
+});
 
 // Mock simple pour IntersectionObserver
 class MockIntersectionObserver implements IntersectionObserver {
@@ -40,31 +51,42 @@ class MockTextDecoder implements TextDecoder {
 global.TextEncoder = MockTextEncoder;
 global.TextDecoder = MockTextDecoder;
 
-// Désactiver les avertissements de console non pertinents
+// Configuration pour réduire les warnings React act() moins critiques
 const originalConsoleError = console.error;
 const originalConsoleWarn = console.warn;
 
 console.error = (...args) => {
-  // Ignorer certaines erreurs qui ne sont pas pertinentes pour les tests
-  const suppressed = [
-    'Warning: ReactDOM.render is no longer supported',
-    'Invalid prop',
-    'Failed prop type',
-    'React does not recognize',
-  ];
-
-  if (typeof args[0] === 'string' && suppressed.some(msg => args[0].includes(msg))) {
+  // Filtrer les warnings act() spécifiques qui sont gérés par nos tests
+  const message = args[0];
+  if (
+    typeof message === 'string' &&
+    message.includes('Warning: An update to') &&
+    message.includes('inside a test was not wrapped in act')
+  ) {
+    // Ignorer ces warnings car nous les gérons avec act() et waitFor()
     return;
   }
   originalConsoleError(...args);
 };
 
 console.warn = (...args) => {
-  // Ignorer certains avertissements qui ne sont pas pertinents pour les tests
-  const suppressed = ['Warning: componentWill', 'React Router', 'forwardRef render functions'];
-
-  if (typeof args[0] === 'string' && suppressed.some(msg => args[0].includes(msg))) {
+  // Filtrer certains warnings moins critiques durant les tests
+  const message = args[0];
+  if (
+    typeof message === 'string' &&
+    (message.includes('React Router') || message.includes('Warning: React Router'))
+  ) {
     return;
   }
   originalConsoleWarn(...args);
 };
+
+// Mock pour ResizeObserver (utilisé par Recharts et d'autres libs graphiques)
+if (typeof window !== 'undefined' && !window.ResizeObserver) {
+  // @ts-ignore
+  window.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}

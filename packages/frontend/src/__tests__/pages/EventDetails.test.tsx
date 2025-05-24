@@ -1,3 +1,4 @@
+import { AppProvider } from '@/contexts/AppContext';
 import { EventDetailsPage } from '@/pages/EventDetails';
 import { render } from '@testing-library/react';
 
@@ -22,7 +23,11 @@ jest.mock('@radix-ui/react-toast', () => ({
 
 describe('EventDetailsPage Component', () => {
   it('renders without crashing', () => {
-    render(<EventDetailsPage />);
+    render(
+      <AppProvider>
+        <EventDetailsPage />
+      </AppProvider>
+    );
     // Test simple pour vérifier que la page se rend sans erreur
   });
 });

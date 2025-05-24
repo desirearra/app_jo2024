@@ -1,4 +1,4 @@
-import { OfferCTA } from '@/components/landing/OfferCTA';
+import { OfferBanner } from '@/components/landing/OfferBanner';
 import { render } from '@testing-library/react';
 
 // Mock React Router
@@ -8,9 +8,9 @@ jest.mock('react-router-dom', () => ({
   ),
 }));
 
-describe('OfferCTA Component', () => {
+describe('OfferBanner Component', () => {
   it('renders without crashing', () => {
-    render(<OfferCTA />);
+    render(<OfferBanner />);
     // Test simple pour vérifier que le composant se rend sans erreur
   });
 });
