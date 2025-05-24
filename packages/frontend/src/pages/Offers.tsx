@@ -1,5 +1,6 @@
 import { OfferCard, type Offer } from '@/components/offers/OfferCard';
 import { OfferFilters } from '@/components/offers/OfferFilters';
+import { useApp } from '@/contexts/AppContext';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
@@ -53,6 +54,7 @@ const mockOffers: Offer[] = [
 export function OffersPage() {
   const [filters, setFilters] = useState<OfferFilters>({});
   const { toast } = useToast();
+  const { addTicketToCart } = useApp();
 
   const filteredOffers = mockOffers.filter(offer => {
     if (filters.type && offer.type !== filters.type) return false;
@@ -76,17 +78,48 @@ export function OffersPage() {
   });
 
   const handleAddToCart = (offer: Offer) => {
-    // TODO: Implémenter l'ajout au panier
-    toast({
-      title: 'Ajouté au panier',
-      description: `${offer.title} a été ajouté à votre panier.`,
-    });
+    // Adapter l'offre au format Ticket attendu par le panier
+    const ticketData = {
+      eventId: offer.id,
+      passType: (offer.type === 'day' ? 'Solo' : offer.type === 'weekend' ? 'Duo' : 'Familial') as
+        | 'Solo'
+        | 'Duo'
+        | 'Familial',
+      sport: offer.sport || '',
+      venue: offer.location || '',
+      quantity: 1,
+      price: offer.price,
+      available: offer.availableSeats || 0,
+    };
+    const ok = addTicketToCart(ticketData);
+    if (ok) {
+      toast({
+        title: 'Ajouté au panier',
+        description: `${offer.title} a été ajouté à votre panier.`,
+      });
+    } else {
+      toast({
+        title: 'Erreur',
+        description: `Impossible d'ajouter cette offre (limite atteinte ou plus de stock).`,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
     <section className="flex flex-col h-screen bg-gradient-to-b from-white to-slate-50">
       <div className="flex-1 container mx-auto px-8 py-10">
-        <h1 className="text-3xl font-bold mb-8">Offres JO 2024</h1>
+        {/* En-tête de section */}
+        <div className="flex flex-col items-center my-16 animate-fade-in-up">
+          <h2 className="text-4xl font-bold text-slate-900 mb-6">
+            Billets officielles des JO Paris 2024
+          </h2>
+          <p className="text-xl text-slate-600 text-center max-w-3xl">
+            Découvrez tous les billets officiels des Jeux Olympiques de Paris 2024.
+          </p>
+        </div>
+
+        <div className="h-px bg-slate-200 my-8" />
 
         <div className="flex flex-col md:flex-row gap-8">
           <aside className="w-full md:w-1/4 flex-shrink-0">

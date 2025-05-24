@@ -1,4 +1,6 @@
 import { Button } from '@/components/ui/button';
+import { useApp } from '@/contexts/AppContext';
+import { useToast } from '@/hooks/use-toast';
 import { useParams } from 'react-router-dom';
 
 // Mock data - à remplacer par l'appel API
@@ -73,10 +75,41 @@ const useCart = () => {
 
 export function EventDetailsPage() {
   const { id } = useParams();
-  const { addToCart } = useCart();
+  const { addTicketToCart } = useApp();
+  const { toast } = useToast();
 
   // TODO: Utiliser l'id pour charger les détails de l'événement depuis l'API
   console.log("Chargement des détails de l'événement:", id);
+
+  const handleAddToCart = (pass: (typeof availablePasses)[number]) => {
+    const ticketData = {
+      eventId: eventDetails.id,
+      passType:
+        pass.type === 'Pass Standard'
+          ? 'Solo'
+          : pass.type === 'Pass Premium'
+            ? 'Duo'
+            : ('Familial' as 'Solo' | 'Duo' | 'Familial'),
+      sport: eventDetails.category,
+      venue: eventDetails.location,
+      quantity: 1,
+      price: pass.price,
+      available: eventDetails.availableSeats,
+    };
+    const ok = addTicketToCart(ticketData);
+    if (ok) {
+      toast({
+        title: 'Ajouté au panier',
+        description: `${pass.type} ajouté à votre panier.`,
+      });
+    } else {
+      toast({
+        title: 'Erreur',
+        description: `Impossible d'ajouter ce pass (limite atteinte ou plus de stock).`,
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
@@ -252,7 +285,7 @@ export function EventDetailsPage() {
                       <h3 className="text-xl font-semibold text-slate-900">{pass.type}</h3>
                       <p className="text-slate-600 mt-1">{pass.description}</p>
                     </div>
-                    <div className="text-2xl font-bold text-blue-600">{pass.price} €</div>
+                    <div className="text-2xl font-bold text-slate-900">{pass.price} €</div>
                   </div>
                   <ul className="flex-1 space-y-3 mb-6">
                     {pass.features.map(feature => (
@@ -274,11 +307,8 @@ export function EventDetailsPage() {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    onClick={() => addToCart(pass.id)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg hover:scale-105 active:scale-95 transition-transform"
-                  >
-                    Réserver
+                  <Button onClick={() => handleAddToCart(pass)} className="w-full">
+                    Ajouter au panier
                   </Button>
                 </div>
               </div>
