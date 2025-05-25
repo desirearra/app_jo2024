@@ -40,7 +40,7 @@ describe('AdminPage', () => {
     expect(
       (
         await screen.findAllByText(
-          (content, node) => node?.textContent?.toLowerCase().includes('jackson lee') ?? false
+          (_, node) => node?.textContent?.toLowerCase().includes('jackson lee') ?? false
         )
       ).length
     ).toBeGreaterThan(0);

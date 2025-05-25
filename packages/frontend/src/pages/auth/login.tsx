@@ -15,7 +15,7 @@ export function LoginForm({ onSuccess }: { onSuccess?: () => void }) {
     e.preventDefault();
     setError('');
     try {
-      await login({ id: email, email, name: email });
+      await login({ id: email, email, name: email, role: 'user' });
       onSuccess?.();
     } catch (err) {
       setError('Erreur de connexion. Veuillez réessayer.');
