@@ -2,11 +2,14 @@ import { Button } from '@/components/ui/button';
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router-dom';
 
 export function ErrorPage() {
-  const error: any = useRouteError();
+  const error = useRouteError() as unknown;
 
   let title = 'Une erreur est survenue';
   let message = "Désolé, une erreur inattendue s'est produite.";
-  let details = error?.data ? error?.data : 'Unknown error';
+  const details =
+    typeof error === 'object' && error !== null && 'data' in error
+      ? (error as { data: string }).data
+      : 'Unknown error';
 
   console.error(error);
 
@@ -27,7 +30,7 @@ export function ErrorPage() {
         </div>
 
         <Button asChild>
-          <Link to="/">Retour à l'accueil</Link>
+          <Link to="/">Retour à l&apos;accueil</Link>
         </Button>
       </div>
     </div>

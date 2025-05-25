@@ -3,19 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Event, Offer, Order, User } from '@/types';
 import * as React from 'react';
 
-const mockStats = [
-  { label: 'Revenu total', value: '45 231€', sub: '+20% vs mois dernier' },
-  { label: 'Abonnements', value: '+2350', sub: '+180% vs mois dernier' },
-  { label: 'Ventes', value: '+12 234', sub: '+19% vs mois dernier' },
-  { label: 'Actifs', value: '+573', sub: '+201 vs dernière heure' },
-];
-
-const mockSales = [
-  { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+1 999€' },
-  { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+39€' },
-  { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+299€' },
-];
-
 const initialOffers: Offer[] = [
   {
     id: 'OFF-001',
@@ -194,24 +181,6 @@ export default function AdminPage() {
         <TabsContent value="events">
           <EventsTab
             data={events}
-            onAdd={event =>
-              setEvents(prev => [
-                ...prev,
-                {
-                  id: `EVT-${prev.length + 1}`,
-                  title: event.title ?? '',
-                  date: event.date ?? '',
-                  lieu: event.lieu ?? '',
-                  price: event.price ?? '',
-                  status: event.status ?? '',
-                  description: event.description ?? '',
-                  image: event.image ?? '',
-                },
-              ])
-            }
-            onEdit={event =>
-              setEvents(prev => prev.map(e => (e.id === event.id ? { ...e, ...event } : e)))
-            }
             onDelete={event => setEvents(prev => prev.filter(e => e.id !== event.id))}
           />
         </TabsContent>
@@ -224,8 +193,6 @@ export default function AdminPage() {
         <TabsContent value="users">
           <UsersTab
             data={users}
-            onAdd={user => setUsers(prev => [...prev, { ...user, id: `USR-${prev.length + 1}` }])}
-            onEdit={user => setUsers(prev => prev.map(u => (u.id === user.id ? user : u)))}
             onDelete={user => setUsers(prev => prev.filter(u => u.id !== user.id))}
           />
         </TabsContent>

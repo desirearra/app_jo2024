@@ -54,7 +54,7 @@ export default function AccountPage() {
         <Lock className="w-10 h-10 mb-4" />
         <h1 className="text-3xl font-bold mb-8">Accès refusé</h1>
         <Button asChild>
-          <Link to="/">Retour à l'accueil</Link>
+          <Link to="/">Retour à l&apos;accueil</Link>
         </Button>
       </div>
     );

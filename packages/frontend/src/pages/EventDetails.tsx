@@ -64,15 +64,6 @@ const availablePasses = [
   },
 ];
 
-// TODO: À remplacer par le vrai context du panier
-const useCart = () => {
-  return {
-    addToCart: (passId: string) => {
-      console.log('Ajout au panier:', passId);
-    },
-  };
-};
-
 export function EventDetailsPage() {
   const { id } = useParams();
   const { addTicketToCart } = useApp();

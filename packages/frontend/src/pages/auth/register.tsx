@@ -16,7 +16,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
     e.preventDefault();
     setError('');
     try {
-      await register({ id: email, email, name });
+      await register({ id: email, email, name, role: 'user' });
       onSuccess?.();
     } catch (err) {
       setError("Erreur lors de l'inscription. Veuillez réessayer.");
@@ -57,7 +57,7 @@ export function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <Button type="submit" className="w-full">
-        S'inscrire
+        S&apos;inscrire
       </Button>
     </form>
   );
