@@ -4,15 +4,16 @@ describe('generateUserKey1', () => {
   beforeAll(() => {
     // Mock uniquement la méthode digest
     if (!window.crypto) {
-      (window as any).crypto = {};
+      (window as unknown as { crypto: unknown }).crypto = {} as unknown;
     }
     if (!window.crypto.subtle) {
-      (window.crypto as any).subtle = {};
+      (window.crypto as unknown as { subtle: unknown }).subtle = {} as unknown;
     }
     if (!window.crypto.subtle.digest) {
-      (window.crypto.subtle as any).digest = async () => new ArrayBuffer(0);
+      (window.crypto.subtle as unknown as { digest: unknown }).digest = async () =>
+        new ArrayBuffer(0);
     }
-    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async (_algo, _data) => {
+    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async () => {
       return new Uint8Array([1, 2, 3, 4, 5]).buffer;
     });
   });
@@ -30,15 +31,16 @@ describe('generateOrderKey2', () => {
   beforeAll(() => {
     // Mock uniquement la méthode digest
     if (!window.crypto) {
-      (window as any).crypto = {};
+      (window as unknown as { crypto: unknown }).crypto = {} as unknown;
     }
     if (!window.crypto.subtle) {
-      (window.crypto as any).subtle = {};
+      (window.crypto as unknown as { subtle: unknown }).subtle = {} as unknown;
     }
     if (!window.crypto.subtle.digest) {
-      (window.crypto.subtle as any).digest = async () => new ArrayBuffer(0);
+      (window.crypto.subtle as unknown as { digest: unknown }).digest = async () =>
+        new ArrayBuffer(0);
     }
-    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async (_algo, _data) => {
+    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async () => {
       return new Uint8Array([6, 7, 8, 9, 10]).buffer;
     });
   });
@@ -56,15 +58,16 @@ describe('generateFinalKey', () => {
   beforeAll(() => {
     // Mock uniquement la méthode digest
     if (!window.crypto) {
-      (window as any).crypto = {};
+      (window as unknown as { crypto: unknown }).crypto = {} as unknown;
     }
     if (!window.crypto.subtle) {
-      (window.crypto as any).subtle = {};
+      (window.crypto as unknown as { subtle: unknown }).subtle = {} as unknown;
     }
     if (!window.crypto.subtle.digest) {
-      (window.crypto.subtle as any).digest = async () => new ArrayBuffer(0);
+      (window.crypto.subtle as unknown as { digest: unknown }).digest = async () =>
+        new ArrayBuffer(0);
     }
-    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async (_algo, _data) => {
+    jest.spyOn(window.crypto.subtle, 'digest').mockImplementation(async () => {
       return new Uint8Array([11, 12, 13, 14, 15]).buffer;
     });
   });
