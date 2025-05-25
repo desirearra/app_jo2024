@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-lint:
+    name: 🧪 Tests et Lint
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: jo2024
+          POSTGRES_PASSWORD: jo2024
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: "npm"
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🎯 Lint
+        run: |
+          npm run lint --workspaces
+          npm run format:check --workspaces
+
+      - name: 🗃️ Appliquer les migrations Prisma
+        run: cd packages/backend && npx prisma migrate deploy && cd ../..
+        env:
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
+          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
+
+      - name: 🧪 Tests
+        run: npm test --workspaces
+        env:
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
+          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
+
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    needs: test-and-lint
+
+    steps:
+      - name: 📥 Checkout du code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: "npm"
+
+      - name: 📦 Installation des dépendances
+        run: npm ci
+
+      - name: 🏗️ Build Frontend
+        run: npm run build --workspace=packages/frontend
+
+      - name: 🏗️ Build Backend
+        run: npm run build --workspace=packages/backend
+        env:
+          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db

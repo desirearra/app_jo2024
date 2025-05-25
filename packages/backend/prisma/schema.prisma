@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  extensions = [pgcrypto(map: "pgcrypto")]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum OffreType {
+  SOLO    // 1 personne
+  DUO     // 2 personnes
+  FAMILLE // 4 personnes
+}
+
+enum CommandeStatut {
+  EN_ATTENTE
+  PAYEE
+  ANNULEE
+  REMBOURSEE
+}
+
+model User {
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String     @unique
+  password   String
+  nom        String
+  prenom     String
+  role       UserRole   @default(USER)
+  cle1       String?    // Clé chiffrée ou hash
+  commandes  Commande[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("utilisateurs")
+}
+
+model Offre {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nom         String
+  description String
+  prix        Decimal    @db.Decimal(10, 2)
+  type        OffreType
+  places      Int
+  actif       Boolean    @default(true)
+  commandes   Commande[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("offres")
+}
+
+model Commande {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur     User            @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  utilisateurId   String          @db.Uuid
+  offre           Offre           @relation(fields: [offreId], references: [id], onDelete: Cascade)
+  offreId         String          @db.Uuid
+  statut          CommandeStatut  @default(EN_ATTENTE)
+  typeTransaction String?
+  idTransaction   String?
+  montantTotal    Decimal         @db.Decimal(10, 2)
+  cle2            String?
+  billets         Billet[]
+  dateCommande    DateTime        @default(now())
+
+  @@index([utilisateurId])
+  @@index([offreId])
+  @@index([statut])
+  @@index([dateCommande])
+  @@map("commandes")
+}
+
+model Billet {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  commande       Commande  @relation(fields: [commandeId], references: [id], onDelete: Cascade)
+  commandeId     String    @db.Uuid
+  qrCode         String    @unique
+  utilise        Boolean   @default(false)
+  dateUtilisation DateTime?
+  cleFinale      String?
+
+  @@index([utilise])
+  @@map("billets")
+}

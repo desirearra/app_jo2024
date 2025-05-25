@@ -37,3 +37,13 @@ yarn-error.log*
 suivi_projet.md
 todolist.md
 .cursorrules 
+
+# Review files
+reviews/
+scripts/analyze-*.sh
+code_review_changes.md
+pr_data.json
+create_issues.sh
+create_simple_issues.sh
+create_sub_issues.sh
+update_issues.sh 
