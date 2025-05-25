@@ -1,7 +1,7 @@
 import { AuthContext } from '@/contexts/AuthContext';
 import AdminPage from '@/pages/Admin';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -90,7 +90,7 @@ describe('AdminPage - Drawer édition offre', () => {
     await screen.findByText(/gestion des offres/i);
     // Puis trouve tous les boutons "Éditer" et clique sur le premier
     const editButtons = await screen.findAllByText(/éditer/i);
-    fireEvent.click(editButtons[0]);
+    await userEvent.click(editButtons[0]);
     // Le Drawer s'ouvre avec le titre et les champs
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText(/édition de l'offre/i)).toBeInTheDocument();
