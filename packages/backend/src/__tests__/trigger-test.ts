@@ -16,8 +16,8 @@ describe('PostgreSQL Triggers', () => {
     const user = await prisma.user.create({
       data: {
         email: 'test@example.com',
-        nom: 'Test',
-        prenom: 'User',
+        firstName: 'Test',
+        lastName: 'User',
         password: 'password123',
       },
     });
@@ -31,7 +31,7 @@ describe('PostgreSQL Triggers', () => {
     // Update the user
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      data: { nom: 'Updated' },
+      data: { firstName: 'Updated' },
     });
 
     // Clean up
