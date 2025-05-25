@@ -43,7 +43,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     try {
       const stored = localStorage.getItem('cart');
       if (stored) return JSON.parse(stored);
-    } catch (e) {}
+    } catch (e) {
+      // Erreur lors de la lecture du localStorage (ignorée intentionnellement)
+    }
     return { tickets: [], totalAmount: 0 };
   };
 

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 
+/* eslint-disable react/prop-types */
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
     <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
