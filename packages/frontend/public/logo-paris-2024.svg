@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cercle extérieur -->
+  <circle cx="256" cy="256" r="240" stroke="white" stroke-width="12" fill="none"/>
+  
+  <!-- Texte PARIS 2024 -->
+  <path d="M156 326V186H236C256 186 272 190 284 198C296 206 302 218 302 234C302 246 298 256 290 264C282 272 272 277 260 279L308 326H272L228 282H188V326H156ZM188 256H234C242 256 248 254 252 250C256 246 258 241 258 235C258 229 256 224 252 220C248 216 242 214 234 214H188V256Z" fill="white"/>
+  
+  <!-- 2024 -->
+  <path d="M156 386V346H284V366L208 426H284V456H156V436L232 376H156V386Z" fill="white"/>
+  
+  <!-- Anneaux olympiques stylisés -->
+  <circle cx="176" cy="156" r="20" stroke="#0085C7" stroke-width="8" fill="none"/>
+  <circle cx="226" cy="156" r="20" stroke="#F4C300" stroke-width="8" fill="none"/>
+  <circle cx="276" cy="156" r="20" stroke="#000000" stroke-width="8" fill="none"/>
+  <circle cx="326" cy="156" r="20" stroke="#009F3D" stroke-width="8" fill="none"/>
+  <circle cx="376" cy="156" r="20" stroke="#DF0024" stroke-width="8" fill="none"/>
+</svg>
