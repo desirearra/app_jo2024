@@ -83,7 +83,6 @@ console.warn = (...args) => {
 
 // Mock pour ResizeObserver (utilisé par Recharts et d'autres libs graphiques)
 if (typeof window !== 'undefined' && !window.ResizeObserver) {
-  // @ts-ignore
   window.ResizeObserver = class {
     observe() {}
     unobserve() {}
