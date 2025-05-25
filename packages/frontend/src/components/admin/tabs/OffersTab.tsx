@@ -26,46 +26,6 @@ export function OffersTab({ data, onAdd, onEdit, onDelete }: OffersTabProps) {
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [offerToDelete, setOfferToDelete] = React.useState<Partial<Offer> | null>(null);
 
-  const columns = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'title', header: 'Titre' },
-    { accessorKey: 'type', header: 'Type' },
-    { accessorKey: 'price', header: 'Prix' },
-    { accessorKey: 'status', header: 'Statut' },
-    { accessorKey: 'description', header: 'Description' },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }: any) => (
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            aria-label="Éditer"
-            onClick={() => {
-              setSheetMode('edit');
-              setSelectedOffer(row.original as Offer);
-              setSheetOpen(true);
-            }}
-          >
-            Éditer
-          </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            aria-label="Supprimer"
-            onClick={() => {
-              setOfferToDelete(row.original as Offer);
-              setDeleteModalOpen(true);
-            }}
-          >
-            Supprimer
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">

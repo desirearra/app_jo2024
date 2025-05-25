@@ -27,7 +27,7 @@ export function ConfirmDeleteModal({
         <DialogHeader>
           <DialogTitle>Confirmer la suppression</DialogTitle>
         </DialogHeader>
-        <p>Voulez-vous vraiment supprimer cette {entityLabel} ? Cette action est irréversible.</p>
+        <p>Voulez-vous vraiment supprimer cette {entityLabel} ? Cette action est irréversible.</p>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Annuler</Button>

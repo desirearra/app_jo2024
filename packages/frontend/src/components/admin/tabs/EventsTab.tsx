@@ -10,12 +10,10 @@ import * as React from 'react';
 
 type EventsTabProps = {
   data: Event[];
-  onAdd: (event: Partial<Event>) => void;
-  onEdit: (event: Event) => void;
   onDelete: (event: Event) => void;
 };
 
-export function EventsTab({ data, onAdd, onEdit, onDelete }: EventsTabProps) {
+export function EventsTab({ data, onDelete }: EventsTabProps) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [sheetMode, setSheetMode] = React.useState<'add' | 'edit'>('add');
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
@@ -32,7 +30,7 @@ export function EventsTab({ data, onAdd, onEdit, onDelete }: EventsTabProps) {
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: Event } }) => (
         <div className="flex gap-2">
           <Button
             size="sm"

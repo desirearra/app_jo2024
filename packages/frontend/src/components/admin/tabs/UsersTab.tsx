@@ -19,14 +19,11 @@ type User = {
 
 type UsersTabProps = {
   data: User[];
-  onAdd: (user: Omit<User, 'id'>) => void;
-  onEdit: (user: User) => void;
   onDelete: (user: User) => void;
 };
 
-export function UsersTab({ data, onAdd, onEdit, onDelete }: UsersTabProps) {
+export function UsersTab({ data, onDelete }: UsersTabProps) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
-  const [sheetMode, setSheetMode] = React.useState<'add' | 'edit'>('add');
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
   const [userToDelete, setUserToDelete] = React.useState<User | null>(null);
@@ -40,7 +37,7 @@ export function UsersTab({ data, onAdd, onEdit, onDelete }: UsersTabProps) {
     {
       id: 'createdAt',
       header: 'Créé le',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: User } }) => (
         <span className="text-xs">
           {row.original.createdAt
             ? new Date(row.original.createdAt).toLocaleDateString('fr-FR')
@@ -51,21 +48,20 @@ export function UsersTab({ data, onAdd, onEdit, onDelete }: UsersTabProps) {
     {
       id: 'key1',
       header: 'Clé 1 (partielle)',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: User } }) => (
         <span className="font-mono text-xs">{row.original.key1?.slice(0, 8) || '—'}</span>
       ),
     },
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: User } }) => (
         <div className="flex gap-2">
           <Button
             size="sm"
             variant="outline"
             aria-label="Afficher détails"
             onClick={() => {
-              setSheetMode('edit');
               setSelectedUser(row.original);
               setSheetOpen(true);
             }}
@@ -100,10 +96,10 @@ export function UsersTab({ data, onAdd, onEdit, onDelete }: UsersTabProps) {
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent>
           <DialogTitle asChild>
-            <h2 className="text-xl font-bold mb-2">Détails de l'utilisateur</h2>
+            <h2 className="text-xl font-bold mb-2">Détails de l&apos;utilisateur</h2>
           </DialogTitle>
           <DialogDescription>
-            Informations détaillées sur l'utilisateur sélectionné.
+            Informations détaillées sur l&apos;utilisateur sélectionné.
           </DialogDescription>
           <div className="h-px bg-slate-200 my-4" />
           {selectedUser && (

@@ -46,7 +46,6 @@ export function OrdersTab({ data, onDelete }: OrdersTabProps) {
   const isAuthentic = true; // Mettre à false pour tester le bouton "Bloquer le billet"
   const [isBlocked, setIsBlocked] = React.useState(false);
   const [sheetOpen, setSheetOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
 
   // Mock user info (à remplacer par recherche réelle plus tard)
   const mockUser = {
@@ -93,14 +92,14 @@ export function OrdersTab({ data, onDelete }: OrdersTabProps) {
     {
       id: 'finalKey',
       header: 'Clé finale (partielle)',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: Order } }) => (
         <span className="font-mono text-xs">{finalKeys[row.original.id]?.slice(0, 16) || '—'}</span>
       ),
     },
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }: any) => (
+      cell: ({ row }: { row: { original: Order } }) => (
         <div className="flex gap-2">
           <Button
             size="sm"
@@ -149,7 +148,7 @@ export function OrdersTab({ data, onDelete }: OrdersTabProps) {
           <DialogHeader>
             <DialogTitle>Vérification de la clé</DialogTitle>
             <DialogDescription>
-              Vérifiez les informations de la commande, de l'utilisateur et la clé générée.
+              Vérifiez les informations de la commande, de l&apos;utilisateur et la clé générée.
             </DialogDescription>
           </DialogHeader>
           {orderToVerify && keyInfo && (
@@ -240,7 +239,7 @@ export function OrdersTab({ data, onDelete }: OrdersTabProps) {
             Informations détaillées sur la commande sélectionnée.
           </DialogDescription>
           <div className="h-px bg-slate-200 my-4" />
-          {selectedOrder && <form className="space-y-3">{/* ... champs ... */}</form>}
+          {orderToVerify && <form className="space-y-3">{/* ... champs ... */}</form>}
         </SheetContent>
       </Sheet>
     </div>
