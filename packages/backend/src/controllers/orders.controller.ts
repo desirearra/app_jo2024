@@ -1,19 +1,28 @@
 import { Request, Response } from 'express';
 import * as ordersService from '../services/orders.service';
+import { orderCreateSchema } from '../types/schemas/order';
 
 // POST /api/orders
 // Crée une nouvelle commande
 // Args: req.body: { userId: string, offerId: string, totalAmount: number }
 // Returns: 201 + commande créée
 export const createOrder = async (req: Request, res: Response): Promise<void> => {
-  const { userId, offerId, totalAmount } = req.body;
-  const order = await ordersService.createOrder({ userId, offerId, totalAmount });
-  // Format totalAmount to always have 2 decimals as string
-  const formattedOrder = {
-    ...order,
-    totalAmount: Number(order.totalAmount).toFixed(2),
-  };
-  res.status(201).json(formattedOrder);
+  try {
+    const parsed = orderCreateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return void res.status(400).json({ error: 'Validation error', details: parsed.error.errors });
+    }
+    const { userId, offerId, totalAmount } = parsed.data;
+    const order = await ordersService.createOrder({ userId, offerId, totalAmount });
+    // Format totalAmount to always have 2 decimals as string
+    const formattedOrder = {
+      ...order,
+      totalAmount: Number(order.totalAmount).toFixed(2),
+    };
+    res.status(201).json(formattedOrder);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
 
 /**

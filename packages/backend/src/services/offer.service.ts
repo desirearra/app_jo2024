@@ -57,8 +57,20 @@ export async function getOfferById(id: string): Promise<Offer | null> {
  * @returns The updated offer or null
  */
 export async function updateOffer(id: string, data: Partial<Offer>): Promise<Offer | null> {
-  const offer = await prisma.offer.update({ where: { id }, data });
-  return toOffer(offer);
+  // Check if offer exists
+  const existing = await prisma.offer.findUnique({ where: { id } });
+  if (!existing) return null;
+  try {
+    const updateData = { ...data };
+    if (updateData.price !== undefined) {
+      updateData.price = new Prisma.Decimal(updateData.price);
+    }
+    const offer = await prisma.offer.update({ where: { id }, data: updateData });
+    return toOffer(offer);
+  } catch (err) {
+    // Log or handle error as needed
+    return null;
+  }
 }
 
 /**

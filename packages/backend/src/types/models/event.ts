@@ -18,9 +18,9 @@ export type Event = {
   /** Event image (optional) */
   image?: string | null;
   /** Event creation date (ISO 8601) */
-  createdAt: string;
+  createdAt: Date;
   /** Event last update date (ISO 8601) */
-  updatedAt: string;
+  updatedAt: Date;
   /** Soft delete flag */
   isDeleted: boolean;
 };

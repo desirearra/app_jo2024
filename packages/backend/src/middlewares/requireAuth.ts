@@ -26,9 +26,23 @@ const requireAuth = (
   }
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, config.jwt.secret) as JwtUser;
-    req.user = decoded;
-    return next();
+    const decoded = jwt.verify(token, config.jwt.secret);
+    // Validate JwtUser structure
+    type Decoded = { userId?: unknown; email?: unknown; role?: unknown };
+    const d = decoded as Decoded;
+    if (
+      typeof decoded === 'object' &&
+      decoded !== null &&
+      typeof d.userId === 'string' &&
+      typeof d.email === 'string' &&
+      typeof d.role === 'string' &&
+      (['USER', 'ADMIN'] as string[]).includes(d.role)
+    ) {
+      req.user = { userId: d.userId, email: d.email, role: d.role } as JwtUser;
+      return next();
+    } else {
+      return res.status(401).json({ error: 'Invalid token payload' });
+    }
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired token' });
   }

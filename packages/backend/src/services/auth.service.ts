@@ -31,7 +31,10 @@ export const verifyPassword = async (password: string, hash: string): Promise<bo
  * @returns HMAC string
  */
 export const generateUserKey1 = (email: string, id: string, date: string): string => {
-  const masterKey = process.env.MASTER_KEY || 'default_master_key';
+  const masterKey = process.env.MASTER_KEY;
+  if (!masterKey) {
+    throw new Error('MASTER_KEY environment variable is not set. Aborting for security reasons.');
+  }
   return crypto
     .createHmac('sha256', masterKey)
     .update(email + id + date)

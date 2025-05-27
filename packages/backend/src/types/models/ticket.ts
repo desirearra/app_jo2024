@@ -15,9 +15,9 @@ export type Ticket = {
   /** Ticket status (ACTIVE, USED, CANCELLED) */
   status: 'ACTIVE' | 'USED' | 'CANCELLED';
   /** Ticket creation date (ISO 8601) */
-  createdAt: string;
+  createdAt: Date;
   /** Ticket last update date (ISO 8601) */
-  updatedAt: string;
+  updatedAt: Date;
   /** Soft delete flag (true if deleted) */
   isDeleted: boolean;
 };

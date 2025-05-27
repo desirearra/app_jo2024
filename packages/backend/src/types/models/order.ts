@@ -20,9 +20,9 @@ export type Order = {
   /** Key2 for ticket security (optional) */
   key2?: string | null;
   /** Order creation date (ISO 8601) */
-  createdAt: string;
+  createdAt: Date;
   /** Order last update date (ISO 8601) */
-  updatedAt: string;
+  updatedAt: Date;
   /** Soft delete flag */
   isDeleted: boolean;
 };

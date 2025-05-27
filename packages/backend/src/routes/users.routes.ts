@@ -49,7 +49,7 @@ router.get('/:id', requireAuth, requireAdminOrSelf, getUserById);
  * @param id User ID (string)
  * @body updateUserSchema
  */
-router.put('/:id', requireAuth, validateRequest(updateUserSchema), updateUser);
+router.put('/:id', requireAuth, requireAdminOrSelf, validateRequest(updateUserSchema), updateUser);
 
 /**
  * @route DELETE /api/users/:id
