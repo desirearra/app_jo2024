@@ -1,10 +1,9 @@
-import { OfferType, PrismaClient, UserRole } from '@prisma/client';
+import { OfferType, UserRole } from '@prisma/client';
 import request from 'supertest';
 import app from '../app';
 import { hashPassword } from '../services/auth.service';
 import type { Ticket } from '../types/models/ticket';
-
-const prisma = new PrismaClient();
+import { prisma } from '../utils/prisma';
 
 // Admin test user
 const adminUser = {

@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
 import app from '../app'; // à adapter selon l'export de l'app Express
-
-const prisma = new PrismaClient();
+import { prisma } from '../utils/prisma';
 
 beforeEach(async () => {
   // Nettoyage avant chaque test

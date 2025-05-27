@@ -69,6 +69,46 @@
         }
       }
     },
+    "/auth/2fa/verify": {
+      "post": {
+        "summary": "Vérifier le code 2FA (admin)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "code": { "type": "string" }
+                },
+                "required": ["email", "code"]
+              },
+              "example": {
+                "email": "admin@example.com",
+                "code": "123456"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "2FA vérifié, JWT retourné",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Code 2FA invalide ou expiré" }
+        }
+      }
+    },
     "/users": {
       "get": {
         "summary": "Lister tous les utilisateurs (admin)",

@@ -1,9 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
 import app from '../../app';
 import { hashPassword } from '../../services/auth.service';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../utils/prisma';
 
 // Test users
 const adminUser = {

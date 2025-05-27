@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { OlympicRings } from '@/components/ui/OlympicRings';
 import { QRCodeSVG } from 'qrcode.react';
 import { Link } from 'react-router-dom';
 
@@ -11,9 +10,34 @@ const uniqueTicketId = 'DEMO-2024-JO-PARIS';
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white py-16 sm:py-16 flex items-center">
+    <section className="relative flex-col overflow-hidden bg-white py-16 sm:py-16 flex items-center">
       {/* Anneaux olympiques décoratifs */}
-      <OlympicRings className="absolute inset-0 pointer-events-none" />
+      {/* <OlympicRings className="absolute inset-0 pointer-events-none" /> */}
+      <div className="w-full relative h-[50vh] overflow-hidden">
+        <img
+          src={
+            'https://il.srgssr.ch/images/?imageUrl=https%3A%2F%2Fimg.rts.ch%2Fmedias%2F2024%2Fimage%2Fu5itu0-28596283.image%2F16x9&format=jpg&width=1920'
+          }
+          alt={'JO 2024'}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
+        <div className="absolute inset-0 flex items-end">
+          <div className="container mx-auto px-4 pb-12">
+            <div className="max-w-4xl animate-fade-in-up">
+              <div className="mb-4">
+                <span className="inline-block px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-full">
+                  {/* {eventDetails.category} */}
+                </span>
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                {/* {eventDetails.title} */}
+              </h1>
+              <p className="text-xl text-white/90 max-w-2xl">{/* {eventDetails.description} */}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="relative w-full mx-auto max-w-[88rem] sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">

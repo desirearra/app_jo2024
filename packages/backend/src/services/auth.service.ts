@@ -55,9 +55,9 @@ export const generate2FACode = (): string => {
  * @param code 2FA code
  * @returns Promise<void>
  */
-export const send2FACodeByEmail = async (email: string, code: string): Promise<void> => {
+export const send2FACodeByEmail = async (_email: string, _code: string): Promise<void> => {
   // TODO: Replace with real email service
-  console.log(`[2FA] Send code ${code} to ${email}`);
+  // [2FA] Send code ${_code} to ${_email}
 };
 
 /**

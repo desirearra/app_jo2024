@@ -7,12 +7,12 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "yarn workspace @app/frontend dev & yarn workspace @app/backend dev",
+    "dev": "yarn workspace @app/frontend dev && yarn workspace @app/backend dev",
     "build": "yarn workspace @app/frontend build",
-    "test": "yarn workspace @app/frontend test & yarn workspace @app/backend test",
+    "test": "yarn workspace @app/frontend test && yarn workspace @app/backend test",
     "test-frontend": "yarn workspace @app/frontend test",
     "test-backend": "yarn workspace @app/backend test",
-    "lint": "yarn workspace @app/frontend lint",
+    "lint": "yarn workspace @app/frontend lint && yarn workspace @app/backend lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "prepare": "husky install"
   },

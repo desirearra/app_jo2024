@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
 import app from '../app';
 import { hashPassword } from '../services/auth.service';
+import { prisma } from '../utils/prisma';
 
-const prisma = new PrismaClient();
 let adminToken: string;
 
 // Clean up the database before each test

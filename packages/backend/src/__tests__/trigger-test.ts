@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../utils/prisma';
 
 describe('PostgreSQL Triggers', () => {
-  let prisma: PrismaClient;
+  // let prisma: PrismaClient;
 
   beforeAll(() => {
-    prisma = new PrismaClient();
+    // prisma = new PrismaClient();
   });
 
   afterAll(async () => {

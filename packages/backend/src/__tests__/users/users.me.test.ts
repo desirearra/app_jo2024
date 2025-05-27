@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
 import app from '../../app';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../utils/prisma';
 
 // Test user credentials
 const testUser = {
