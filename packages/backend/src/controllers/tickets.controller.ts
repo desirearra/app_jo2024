@@ -16,16 +16,18 @@ import { logger } from '../utils/logger';
  * @body TicketCreate
  * @returns 201 Ticket | 400 Invalid data | 403 Forbidden
  */
-export const createTicketFileController = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const createTicketController = async (req: Request, res: Response): Promise<Response> => {
   try {
-    const data = ticketCreateSchema.parse(req.body);
+    const parsed = ticketCreateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Validation error', details: parsed.error.errors });
+    }
+    const { userId, orderId, status, isDeleted } = parsed.data;
     const ticket = await createTicket({
-      ...data,
-      status: data.status ?? 'ACTIVE',
-      isDeleted: data.isDeleted ?? false,
+      userId,
+      orderId,
+      status: status ?? 'ACTIVE',
+      isDeleted: isDeleted ?? false,
     });
     return res.status(201).json(ticket);
   } catch (error) {
@@ -40,10 +42,7 @@ export const createTicketFileController = async (
  * @access Admin (bearer token)
  * @returns 200 Ticket[] | 403 Forbidden
  */
-export const getAllTicketsFileController = async (
-  _req: Request,
-  res: Response
-): Promise<Response> => {
+export const getAllTicketsController = async (_req: Request, res: Response): Promise<Response> => {
   try {
     const tickets = await getAllTickets();
     return res.json(tickets);
@@ -59,10 +58,7 @@ export const getAllTicketsFileController = async (
  * @access Admin (bearer token)
  * @returns 200 Ticket | 404 Not found | 403 Forbidden
  */
-export const getTicketByIdFileController = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const getTicketByIdController = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
     const ticket = await getTicketById(id);
@@ -81,14 +77,14 @@ export const getTicketByIdFileController = async (
  * @body TicketUpdate
  * @returns 200 Ticket | 400 Invalid data | 404 Not found | 403 Forbidden
  */
-export const updateTicketFileController = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const updateTicketController = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
-    const data = ticketUpdateSchema.parse(req.body);
-    const ticket = await updateTicket(id, data);
+    const parsed = ticketUpdateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: 'Validation error', details: parsed.error.errors });
+    }
+    const ticket = await updateTicket(id, parsed.data);
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
     return res.json(ticket);
   } catch (error) {
@@ -103,10 +99,7 @@ export const updateTicketFileController = async (
  * @access Admin (bearer token)
  * @returns 200 Success | 404 Not found | 403 Forbidden
  */
-export const deleteTicketFileController = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+export const deleteTicketController = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { id } = req.params;
     const ticket = await deleteTicket(id);

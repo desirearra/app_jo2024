@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { prisma } from '../utils/prisma';
 
 const SALT_ROUNDS = 10;
-const prisma = new PrismaClient();
 
 /**
  * Hash a password using bcrypt
@@ -44,7 +43,7 @@ export const generateUserKey1 = (email: string, id: string, date: string): strin
  * @returns string (6 digits)
  */
 export const generate2FACode = (): string => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 /**

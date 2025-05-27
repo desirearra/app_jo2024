@@ -1,17 +1,48 @@
-import { PrismaClient, Ticket as PrismaTicket } from '@prisma/client';
+import { Ticket as PrismaTicket } from '@prisma/client';
+import crypto from 'crypto';
 import type { Ticket } from '../types/models/ticket';
+import { prisma } from '../utils/prisma';
 
-const prisma = new PrismaClient();
+/**
+ * Generate the final key (finalKey) for a ticket
+ * @param key1 User key1
+ * @param key2 Order key2
+ * @returns string finalKey (hashed)
+ */
+function generateFinalKey(key1: string, key2: string): string {
+  // Secure: hash the concatenation with SHA-256
+  return crypto.createHash('sha256').update(`${key1}:${key2}`).digest('hex');
+}
 
 /**
  * Create a new ticket in the database
- * @param data - Ticket creation data (userId, offerId, finalKey, status, isDeleted)
+ * Automatically generates the finalKey from user key1 and order key2
+ * @param data - Ticket creation data (userId, orderId, status, isDeleted)
  * @returns Promise<Ticket> - The created ticket
  */
 export const createTicket = async (
-  data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>
+  data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'finalKey' | 'offerId'> & {
+    orderId: string;
+  }
 ): Promise<Ticket> => {
-  const ticket = await prisma.ticket.create({ data });
+  // Retrieve user key1
+  const user = await prisma.user.findUnique({ where: { id: data.userId } });
+  if (!user || !user.key1) throw new Error('User or key1 not found');
+  // Retrieve order and key2
+  const order = await prisma.order.findUnique({ where: { id: data.orderId } });
+  if (!order || !order.key2) throw new Error('Order or key2 not found');
+  // Generate finalKey
+  const finalKey = generateFinalKey(user.key1, order.key2);
+  // Create the ticket (link to offer via order)
+  const ticket = await prisma.ticket.create({
+    data: {
+      userId: data.userId,
+      offerId: order.offerId,
+      finalKey,
+      status: data.status,
+      isDeleted: data.isDeleted,
+    },
+  });
   return toTicket(ticket);
 };
 
@@ -30,8 +61,8 @@ export const getAllTickets = async (): Promise<Ticket[]> => {
  * @returns Promise<Ticket | null> - The ticket or null if not found
  */
 export const getTicketById = async (id: string): Promise<Ticket | null> => {
-  const ticket = await prisma.ticket.findUnique({ where: { id, isDeleted: false } });
-  return ticket ? toTicket(ticket) : null;
+  const ticket = await prisma.ticket.findUnique({ where: { id } });
+  return ticket && !ticket.isDeleted ? toTicket(ticket) : null;
 };
 
 /**
@@ -44,6 +75,9 @@ export const updateTicket = async (
   id: string,
   data: Partial<Omit<Ticket, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<Ticket | null> => {
+  // Check if ticket exists
+  const existing = await prisma.ticket.findUnique({ where: { id } });
+  if (!existing) return null;
   const ticket = await prisma.ticket.update({ where: { id }, data });
   return ticket ? toTicket(ticket) : null;
 };

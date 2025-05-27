@@ -1,11 +1,9 @@
-import { PrismaClient } from '@prisma/client';
 import { Response } from 'express';
 import { z } from 'zod';
 import { AuthenticatedRequest } from '../middlewares/requireAuth';
 import { updateUserSchema } from '../types/schemas/user';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
+import { prisma } from '../utils/prisma';
 
 /**
  * Controller to get the authenticated user's profile

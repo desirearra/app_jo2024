@@ -17,7 +17,7 @@ import { logger } from '../utils/logger';
  * @param res Express Response
  * @returns 201 + Offer | 400 | 500
  */
-export async function createOfferFileController(req: Request, res: Response): Promise<Response> {
+export async function createOfferController(req: Request, res: Response): Promise<Response> {
   try {
     const parsed = createOfferSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
@@ -37,7 +37,7 @@ export async function createOfferFileController(req: Request, res: Response): Pr
  * @param res Express Response
  * @returns 200 + Offer[] | 500
  */
-export async function getAllOffersFileController(_req: Request, res: Response): Promise<Response> {
+export async function getAllOffersController(_req: Request, res: Response): Promise<Response> {
   try {
     const offers = await getAllOffers();
     return res.status(200).json(offers);
@@ -55,7 +55,7 @@ export async function getAllOffersFileController(_req: Request, res: Response): 
  * @param res Express Response
  * @returns 200 + Offer | 404 | 500
  */
-export async function getOfferByIdFileController(req: Request, res: Response): Promise<Response> {
+export async function getOfferByIdController(req: Request, res: Response): Promise<Response> {
   try {
     const { id } = req.params;
     const offer = await getOfferById(id);
@@ -75,7 +75,7 @@ export async function getOfferByIdFileController(req: Request, res: Response): P
  * @param res Express Response
  * @returns 200 + Offer | 400 | 404 | 500
  */
-export async function updateOfferFileController(req: Request, res: Response): Promise<Response> {
+export async function updateOfferController(req: Request, res: Response): Promise<Response> {
   try {
     const { id } = req.params;
     const parsed = updateOfferSchema.safeParse(req.body);
@@ -97,7 +97,7 @@ export async function updateOfferFileController(req: Request, res: Response): Pr
  * @param res Express Response
  * @returns 204 | 404 | 500
  */
-export async function deleteOfferFileController(req: Request, res: Response): Promise<Response> {
+export async function deleteOfferController(req: Request, res: Response): Promise<Response> {
   try {
     const { id } = req.params;
     const offer = await deleteOffer(id);

@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { Request, RequestHandler, Response } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { config } from '../config';
@@ -11,8 +10,7 @@ import {
 } from '../services/auth.service';
 import { loginSchema, twoFAVerifySchema } from '../types/schemas/auth';
 import { logger } from '../utils/logger';
-
-const prisma = new PrismaClient();
+import { prisma } from '../utils/prisma';
 
 /**
  * Login route with 2FA for admin

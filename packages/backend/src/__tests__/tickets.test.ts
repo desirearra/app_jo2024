@@ -38,6 +38,7 @@ let adminToken: string;
 let userId: string;
 let offerId: string;
 let ticketId: string;
+let orderId: string;
 
 async function getAdminToken(email: string, password: string): Promise<string> {
   await request(app).post('/api/auth/login').send({ email, password });
@@ -68,6 +69,7 @@ beforeAll(async () => {
       ...regularUser,
       role: UserRole.USER,
       password: await hashPassword(regularUser.password),
+      key1: 'USERKEY1',
     },
   });
   userId = user.id;
@@ -81,6 +83,17 @@ beforeAll(async () => {
     },
   });
   offerId = offer.id;
+
+  // Create order for the ticket
+  const order = await prisma.order.create({
+    data: {
+      userId,
+      offerId,
+      totalAmount: 99.99,
+      key2: 'ORDERKEY2',
+    },
+  });
+  orderId = order.id;
 
   // Login admin via helper 2FA
   adminToken = await getAdminToken(adminUser.email, adminUser.password);
@@ -100,14 +113,13 @@ describe('Ticket CRUD (admin only)', () => {
       .set('Authorization', `Bearer ${adminToken}`)
       .send({
         userId,
-        offerId,
-        finalKey: 'QR123456789',
+        orderId,
       });
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty('id');
     expect(res.body.userId).toBe(userId);
     expect(res.body.offerId).toBe(offerId);
-    expect(res.body.finalKey).toBe('QR123456789');
+    expect(res.body.finalKey).toBeDefined();
     expect(res.body.status).toBe('ACTIVE');
     ticketId = res.body.id;
   });
@@ -157,7 +169,7 @@ describe('Ticket CRUD (admin only)', () => {
     const res = await request(app)
       .post('/api/tickets')
       .set('Authorization', `Bearer ${userToken}`)
-      .send({ userId, offerId, finalKey: 'QR987654321' });
+      .send({ userId, orderId });
     expect(res.status).toBe(403);
   });
 });

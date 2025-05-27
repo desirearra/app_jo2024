@@ -1,7 +1,6 @@
-import { PrismaClient, Offer as PrismaOffer } from '@prisma/client';
+import { Prisma, Offer as PrismaOffer } from '@prisma/client';
 import { Offer } from '../types/models/offer';
-
-const prisma = new PrismaClient();
+import { prisma } from '../utils/prisma';
 
 /**
  * Convertit un objet Offer Prisma en Offer typé (price en string)
@@ -23,7 +22,12 @@ function toOffer(o: PrismaOffer): Offer {
 export async function createOffer(
   data: Omit<Offer, 'id' | 'createdAt' | 'updatedAt' | 'isDeleted'>
 ): Promise<Offer> {
-  const offer = await prisma.offer.create({ data });
+  const offer = await prisma.offer.create({
+    data: {
+      ...data,
+      price: new Prisma.Decimal(data.price),
+    },
+  });
   return toOffer(offer);
 }
 

@@ -1,6 +1,5 @@
-import { Event, PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Event } from '@prisma/client';
+import { prisma } from '../utils/prisma';
 
 /**
  * Crée un nouvel event

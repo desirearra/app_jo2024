@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
-  createOfferFileController,
-  deleteOfferFileController,
-  getAllOffersFileController,
-  getOfferByIdFileController,
-  updateOfferFileController,
+  createOfferController,
+  deleteOfferController,
+  getAllOffersController,
+  getOfferByIdController,
+  updateOfferController,
 } from '../controllers/offers.controller';
 import requireAuth from '../middlewares/requireAuth';
 import { requireRole } from '../middlewares/requireRole';
@@ -17,14 +17,14 @@ const router = Router();
  * @access Admin only
  * @body OfferCreateSchema
  */
-router.post('/', requireAuth, requireRole(['ADMIN']), createOfferFileController);
+router.post('/', requireAuth, requireRole(['ADMIN']), createOfferController);
 
 /**
  * @route GET /api/offers
  * @desc List all offers
  * @access Public
  */
-router.get('/', getAllOffersFileController);
+router.get('/', getAllOffersController);
 
 /**
  * @route GET /api/offers/:id
@@ -32,7 +32,7 @@ router.get('/', getAllOffersFileController);
  * @access Public
  * @param id Offer ID (string)
  */
-router.get('/:id', getOfferByIdFileController);
+router.get('/:id', getOfferByIdController);
 
 /**
  * @route PUT /api/offers/:id
@@ -41,7 +41,7 @@ router.get('/:id', getOfferByIdFileController);
  * @param id Offer ID (string)
  * @body OfferUpdateSchema
  */
-router.put('/:id', requireAuth, requireRole(['ADMIN']), updateOfferFileController);
+router.put('/:id', requireAuth, requireRole(['ADMIN']), updateOfferController);
 
 /**
  * @route DELETE /api/offers/:id
@@ -49,6 +49,6 @@ router.put('/:id', requireAuth, requireRole(['ADMIN']), updateOfferFileControlle
  * @access Admin only
  * @param id Offer ID (string)
  */
-router.delete('/:id', requireAuth, requireRole(['ADMIN']), deleteOfferFileController);
+router.delete('/:id', requireAuth, requireRole(['ADMIN']), deleteOfferController);
 
 export default router;

@@ -1,6 +1,5 @@
-import { Order, PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Order } from '@prisma/client';
+import { prisma } from '../utils/prisma';
 
 /**
  * Crée une nouvelle commande

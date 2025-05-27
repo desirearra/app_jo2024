@@ -5,7 +5,9 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from '../swagger.json';
 import { errorHandler } from './middlewares/errorHandler';
 import authRoutes from './routes/auth.routes';
+import eventsRoutes from './routes/events.routes';
 import offersRoutes from './routes/offers.routes';
+import ordersRoutes from './routes/orders.routes';
 import ticketsRoutes from './routes/tickets.routes';
 import usersRoutes from './routes/users.routes';
 
@@ -30,11 +32,9 @@ app.use(
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/offers', offersRoutes);
-
-/**
- * Tickets routes (CRUD, admin only)
- */
 app.use('/api/tickets', ticketsRoutes);
+app.use('/api/orders', ordersRoutes);
+app.use('/api/events', eventsRoutes);
 
 app.use(errorHandler);
 

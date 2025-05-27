@@ -4,10 +4,27 @@ import app from '../app'; // à adapter selon l'export de l'app Express
 
 const prisma = new PrismaClient();
 
+beforeEach(async () => {
+  // Nettoyage avant chaque test
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        in: ['testuser@example.com', 'weakpass@example.com'],
+      },
+    },
+  });
+});
+
 describe('POST /api/auth/register', () => {
   afterAll(async () => {
-    // Nettoyage : suppression de l'utilisateur de test
-    await prisma.user.deleteMany({ where: { email: 'testuser@example.com' } });
+    // Nettoyage : suppression des utilisateurs de test
+    await prisma.user.deleteMany({
+      where: {
+        email: {
+          in: ['testuser@example.com', 'weakpass@example.com'],
+        },
+      },
+    });
     await prisma.$disconnect();
   });
 

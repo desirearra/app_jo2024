@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { NextFunction, Response, Router } from 'express';
 import {
   deleteUser,
   getMe,
@@ -6,12 +6,19 @@ import {
   listUsers,
   updateUser,
 } from '../controllers/users.controller';
-import requireAuth from '../middlewares/requireAuth';
+import requireAuth, { AuthenticatedRequest } from '../middlewares/requireAuth';
 import { requireRole } from '../middlewares/requireRole';
 import { validateRequest } from '../middlewares/validateRequest';
 import { updateUserSchema } from '../types/schemas/user';
 
 const router = Router();
+
+// Middleware: autorise seulement admin ou self
+function requireAdminOrSelf(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
+  if (!req.user) return void res.status(401).json({ error: 'Unauthorized' });
+  if (req.user.role === 'ADMIN' || req.user.userId === req.params.id) return void next();
+  return void res.status(403).json({ error: 'Forbidden' });
+}
 
 /**
  * @route GET /api/users/me
@@ -33,7 +40,7 @@ router.get('/', requireAuth, requireRole(['ADMIN']), listUsers);
  * @access Admin or self
  * @param id User ID (string)
  */
-router.get('/:id', requireAuth, getUserById);
+router.get('/:id', requireAuth, requireAdminOrSelf, getUserById);
 
 /**
  * @route PUT /api/users/:id

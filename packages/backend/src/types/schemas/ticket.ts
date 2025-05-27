@@ -2,12 +2,11 @@ import { z } from 'zod';
 
 /**
  * Zod schema for creating a ticket (used in POST /tickets)
- * Fields: userId, offerId, finalKey, status (optional), isDeleted (optional)
+ * Fields: userId, orderId, status (optional), isDeleted (optional)
  */
 export const ticketCreateSchema = z.object({
   userId: z.string().uuid(),
-  offerId: z.string().uuid(),
-  finalKey: z.string().min(8),
+  orderId: z.string().uuid(),
   status: z.enum(['ACTIVE', 'USED', 'CANCELLED']).optional(),
   isDeleted: z.boolean().optional(),
 });

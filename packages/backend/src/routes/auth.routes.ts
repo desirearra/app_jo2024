@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { Request, Router } from 'express';
 import { z } from 'zod';
 import { loginFileController, verify2FAFileController } from '../controllers/auth.controller';
@@ -6,9 +5,9 @@ import { validateRequest } from '../middlewares/validateRequest';
 import { generateUserKey1, hashPassword } from '../services/auth.service';
 import { loginSchema, registerSchema, twoFAVerifySchema } from '../types/schemas/auth';
 import { logger } from '../utils/logger';
+import { prisma } from '../utils/prisma';
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Strong password policy (min 8 chars, 1 uppercase, 1 digit, 1 special char)
 const isStrongPassword = (password: string): boolean => {
@@ -17,7 +16,6 @@ const isStrongPassword = (password: string): boolean => {
 
 // Type for validated request (extends Express Request)
 type RegisterData = z.infer<typeof registerSchema>;
-type LoginData = z.infer<typeof loginSchema>;
 
 interface ValidatedRequest<T> extends Request {
   validated?: T; // Optional for Express compatibility
