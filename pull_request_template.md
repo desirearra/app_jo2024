@@ -1,48 +1,45 @@
-# 🚀 Release PR – Merge `develop` → `main`
+# 🚀 Intégration Frontend ↔ Backend – Affichage dynamique des données
 
-## Description
+## Objectif
 
-Cette Pull Request fusionne la branche `develop` dans `main` pour une nouvelle release de l’application.  
-Elle inclut toutes les évolutions, corrections et améliorations validées depuis la dernière release.
+Cette Pull Request vise à connecter le frontend React/Vite au backend Node/Prisma, en affichant dynamiquement les données issues du seed (offres, événements, utilisateurs, etc.) et en supprimant progressivement les mocks côté frontend.
 
 ---
 
-## ✨ Principales évolutions incluses
+## ✨ Points clés de la PR
 
-- **Déploiement Fly.io** : Backend et frontend déployés et configurés
-- **Connexion Frontend ↔ Backend** : Intégration API centralisée avec axios, suppression progressive des mocks
-- **Fixtures & Seed Prisma** : Ajout de données d’exemple (admin, offres, événements) pour faciliter le développement et les tests
-- **CRUD Offres/Événements** : Premiers écrans fonctionnels côté admin, début d’intégration des opérations réelles
-- **Tests & Qualité** : Couverture de tests améliorée (logger, services), correction des warnings ESLint/Jest
-- **CI/CD** : Pipeline de build/test/coverage opérationnel
-- **Divers** : Corrections de bugs, améliorations UI, documentation technique
+- Connexion des pages et composants frontend aux endpoints API réels
+- Utilisation des hooks/services pour récupérer les données seed (offres, événements, etc.)
+- Suppression progressive des données mockées
+- Gestion des états de chargement et d’erreur (UX)
+- Premiers CRUD fonctionnels (lecture, création, édition, suppression)
+- Tests d’intégration (si possible)
 
 ---
 
 ## 🧪 Vérifications
 
-- [x] Tests unitaires et d’intégration passés
-- [x] Couverture de code conforme au seuil projet
-- [x] Déploiement Fly.io validé (backend & frontend)
-- [x] Fonctionnalités principales testées manuellement
+- [ ] Les données affichées côté frontend proviennent bien du backend (seed)
+- [ ] Les mocks sont supprimés ou désactivés
+- [ ] Les états de loading/erreur sont gérés
+- [ ] Les opérations CRUD fonctionnent (au moins en lecture)
+- [ ] Les tests passent (unitaires et d’intégration)
 
 ---
 
-## 📚 Instructions de déploiement
+## 📚 Instructions de test
 
-- Lancer le script de seed Prisma si besoin (`npx prisma db seed`)
-- Vérifier les variables d’environnement sur Fly.io
-- Suivre la checklist de release projet
+- Lancer le backend avec la base seedée
+- Lancer le frontend sur la branche d’intégration
+- Vérifier l’affichage dynamique sur les pages concernées
 
 ---
 
-## 📝 À faire après le merge
+## 📝 À faire après merge
 
-- Taguer la release sur `main`
 - Mettre à jour la documentation Notion
-- Communiquer la release à l’équipe
+- Communiquer à l’équipe pour validation
 
 ---
 
-**Prêt pour la release ! 🚀  
-Merci à toute l’équipe pour le travail accompli.**
+**Ready for review & merge! 🚀**
