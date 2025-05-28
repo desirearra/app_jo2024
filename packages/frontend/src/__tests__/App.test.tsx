@@ -1,6 +1,13 @@
 import { render } from '@testing-library/react';
 import App from '../App';
 
+jest.mock('@/lib/api', () => ({
+  get: jest.fn(() => Promise.resolve({ data: [] })),
+  post: jest.fn(),
+  put: jest.fn(),
+  del: jest.fn(),
+}));
+
 // Mock tous les composants qui posent problème
 jest.mock('react-router-dom', () => ({
   createBrowserRouter: jest.fn(() => ({})),

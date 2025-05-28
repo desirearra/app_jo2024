@@ -1,4 +1,6 @@
 import { RevenueChart } from '@/components/admin/RevenueChart';
+import { get } from '@/lib/api';
+import { useEffect } from 'react';
 
 type Stat = { label: string; value: string; sub: string };
 type Sale = { name: string; email: string; amount: string };
@@ -9,6 +11,13 @@ type DashboardTabProps = {
 };
 
 export function DashboardTab({ stats, sales }: DashboardTabProps) {
+  useEffect(() => {
+    const getOffers = async () => {
+      const response = await get('/offers');
+      console.log(response.data);
+    };
+    getOffers();
+  }, []);
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 w-full">

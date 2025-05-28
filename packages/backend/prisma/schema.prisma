@@ -21,79 +21,98 @@ enum UserRole {
   ADMIN
 }
 
-enum OffreType {
-  SOLO    // 1 personne
-  DUO     // 2 personnes
-  FAMILLE // 4 personnes
+enum OfferType {
+  SOLO
+  DUO
+  FAMILY
 }
 
-enum CommandeStatut {
-  EN_ATTENTE
-  PAYEE
-  ANNULEE
-  REMBOURSEE
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELLED
 }
 
 model User {
-  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email      String     @unique
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email      String   @unique
   password   String
-  nom        String
-  prenom     String
-  role       UserRole   @default(USER)
-  cle1       String?    // Clé chiffrée ou hash
-  commandes  Commande[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  @@map("utilisateurs")
+  firstName  String
+  lastName   String
+  role       UserRole @default(USER)
+  key1       String?  // Encrypted key or hash
+  orders     Order[]
+  tickets    Ticket[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isDeleted  Boolean  @default(false)
+  twoFACode        String?   // 2FA code for admin login
+  twoFAExpiresAt   DateTime? // 2FA code expiration
 }
 
-model Offre {
-  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nom         String
+model Event {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
   description String
-  prix        Decimal    @db.Decimal(10, 2)
-  type        OffreType
-  places      Int
-  actif       Boolean    @default(true)
-  commandes   Commande[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  @@map("offres")
+  sport       String
+  location    String
+  date        DateTime
+  image       String?
+  offers      Offer[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
 }
 
-model Commande {
-  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  utilisateur     User            @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
-  utilisateurId   String          @db.Uuid
-  offre           Offre           @relation(fields: [offreId], references: [id], onDelete: Cascade)
-  offreId         String          @db.Uuid
-  statut          CommandeStatut  @default(EN_ATTENTE)
-  typeTransaction String?
-  idTransaction   String?
-  montantTotal    Decimal         @db.Decimal(10, 2)
-  cle2            String?
-  billets         Billet[]
-  dateCommande    DateTime        @default(now())
-
-  @@index([utilisateurId])
-  @@index([offreId])
-  @@index([statut])
-  @@index([dateCommande])
-  @@map("commandes")
+model Offer {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  description String
+  price       Decimal   @db.Decimal(10, 2)
+  type        OfferType
+  seats       Int       // Remaining seats, decremented after each purchase
+  isActive    Boolean   @default(true)
+  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String?   @db.Uuid
+  orders      Order[]
+  tickets     Ticket[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isDeleted   Boolean   @default(false)
 }
 
-model Billet {
-  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  commande       Commande  @relation(fields: [commandeId], references: [id], onDelete: Cascade)
-  commandeId     String    @db.Uuid
-  qrCode         String    @unique
-  utilise        Boolean   @default(false)
-  dateUtilisation DateTime?
-  cleFinale      String?
+model Order {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String       @db.Uuid
+  offer           Offer        @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  offerId         String       @db.Uuid
+  status          OrderStatus  @default(PENDING)
+  transactionType String?
+  transactionId   String?
+  totalAmount     Decimal      @db.Decimal(10, 2)
+  key2            String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  isDeleted       Boolean      @default(false)
+}
 
-  @@index([utilise])
-  @@map("billets")
+model Ticket {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String       @db.Uuid
+  offer      Offer        @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  offerId    String       @db.Uuid
+  finalKey   String       @unique // This is the QR code value
+  status     TicketStatus @default(ACTIVE)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  isDeleted  Boolean      @default(false)
 }

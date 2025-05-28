@@ -5,6 +5,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
+jest.mock('@/lib/api', () => ({
+  get: jest.fn(() => Promise.resolve({ data: [] })),
+  post: jest.fn(),
+  put: jest.fn(),
+  del: jest.fn(),
+}));
+
 describe('AdminPage', () => {
   it('affiche le menu admin et le dashboard si user admin', async () => {
     render(
