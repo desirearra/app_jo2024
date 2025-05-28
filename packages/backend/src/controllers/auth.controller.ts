@@ -32,9 +32,13 @@ export const loginFileController: RequestHandler = async (req: Request, res: Res
       return res.status(202).json({ status: '2FA_REQUIRED', email: user.email });
     }
     // User: login classique
-    const token = jwt.sign({ userId: user.id, role: user.role }, config.jwt.secret, {
-      expiresIn: '1d',
-    } as SignOptions);
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      config.jwt.secret,
+      {
+        expiresIn: '1d',
+      } as SignOptions
+    );
     return res.json({ token });
   } catch (error) {
     logger.error('Login error', error);
@@ -55,9 +59,13 @@ export const verify2FAFileController: RequestHandler = async (req: Request, res:
       return res.status(401).json({ error: 'Unauthorized' });
     const valid = await verify2FACode(user.id, code);
     if (!valid) return res.status(400).json({ error: 'Invalid or expired 2FA code' });
-    const token = jwt.sign({ userId: user.id, role: user.role }, config.jwt.secret, {
-      expiresIn: '1d',
-    } as SignOptions);
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      config.jwt.secret,
+      {
+        expiresIn: '1d',
+      } as SignOptions
+    );
     return res.json({ token });
   } catch (error) {
     logger.error('2FA verify error', error);

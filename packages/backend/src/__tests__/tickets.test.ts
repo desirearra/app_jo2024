@@ -62,16 +62,9 @@ beforeAll(async () => {
     },
   });
 
-  // Create regular user
-  const user = await prisma.user.create({
-    data: {
-      ...regularUser,
-      role: UserRole.USER,
-      password: await hashPassword(regularUser.password),
-      key1: 'USERKEY1',
-    },
-  });
-  userId = user.id;
+  // Register regular user via API
+  await request(app).post('/api/auth/register').send(regularUser);
+  userId = (await prisma.user.findUnique({ where: { email: regularUser.email } }))!.id;
 
   // Create offer
   const offer = await prisma.offer.create({

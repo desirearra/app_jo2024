@@ -11,7 +11,7 @@ export type Offer = {
   seats: number;
   isActive: boolean;
   eventId?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   isDeleted: boolean;
 };

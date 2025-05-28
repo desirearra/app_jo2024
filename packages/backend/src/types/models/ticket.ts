@@ -14,10 +14,10 @@ export type Ticket = {
   finalKey: string;
   /** Ticket status (ACTIVE, USED, CANCELLED) */
   status: 'ACTIVE' | 'USED' | 'CANCELLED';
-  /** Ticket creation date (ISO 8601) */
-  createdAt: Date;
-  /** Ticket last update date (ISO 8601) */
-  updatedAt: Date;
+  /** Ticket creation date (ISO 8601 string) */
+  createdAt: string;
+  /** Ticket last update date (ISO 8601 string) */
+  updatedAt: string;
   /** Soft delete flag (true if deleted) */
   isDeleted: boolean;
 };

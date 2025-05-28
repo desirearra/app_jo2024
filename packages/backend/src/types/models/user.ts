@@ -10,8 +10,8 @@ export type User = {
   lastName: string;
   role: 'USER' | 'ADMIN';
   key1?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   isDeleted: boolean;
 };
 

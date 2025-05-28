@@ -11,6 +11,8 @@ function toOffer(o: PrismaOffer): Offer {
   return {
     ...o,
     price: o.price.toString(),
+    createdAt: o.createdAt.toISOString(),
+    updatedAt: o.updatedAt.toISOString(),
   };
 }
 
@@ -61,11 +63,12 @@ export async function updateOffer(id: string, data: Partial<Offer>): Promise<Off
   const existing = await prisma.offer.findUnique({ where: { id } });
   if (!existing) return null;
   try {
-    const updateData = { ...data };
-    if (updateData.price !== undefined) {
-      updateData.price = new Prisma.Decimal(updateData.price);
+    // Ne pas muter l'objet d'origine
+    const prismaUpdateData: Record<string, unknown> = { ...data };
+    if (prismaUpdateData.price !== undefined && prismaUpdateData.price !== null) {
+      prismaUpdateData.price = new Prisma.Decimal(prismaUpdateData.price as string);
     }
-    const offer = await prisma.offer.update({ where: { id }, data: updateData });
+    const offer = await prisma.offer.update({ where: { id }, data: prismaUpdateData });
     return toOffer(offer);
   } catch (err) {
     // Log or handle error as needed

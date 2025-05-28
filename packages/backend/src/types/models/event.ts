@@ -13,14 +13,14 @@ export type Event = {
   sport: string;
   /** Event location */
   location: string;
-  /** Event date (ISO 8601) */
+  /** Event date (ISO 8601 string) */
   date: string;
   /** Event image (optional) */
   image?: string | null;
-  /** Event creation date (ISO 8601) */
-  createdAt: Date;
-  /** Event last update date (ISO 8601) */
-  updatedAt: Date;
+  /** Event creation date (ISO 8601 string) */
+  createdAt: string;
+  /** Event last update date (ISO 8601 string) */
+  updatedAt: string;
   /** Soft delete flag */
   isDeleted: boolean;
 };

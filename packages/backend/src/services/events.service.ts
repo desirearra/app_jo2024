@@ -1,5 +1,15 @@
-import { Event } from '@prisma/client';
+import { Event as PrismaEvent } from '@prisma/client';
+import type { Event } from '../types/models/event';
 import { prisma } from '../utils/prisma';
+
+function toEvent(e: PrismaEvent): Event {
+  return {
+    ...e,
+    date: e.date.toISOString(),
+    createdAt: e.createdAt.toISOString(),
+    updatedAt: e.updatedAt.toISOString(),
+  };
+}
 
 /**
  * Crée un nouvel event
@@ -20,7 +30,8 @@ export const createEvent = async (data: {
   date: Date;
   image?: string;
 }): Promise<Event> => {
-  return prisma.event.create({ data });
+  const event = await prisma.event.create({ data });
+  return toEvent(event);
 };
 
 /**
@@ -29,7 +40,8 @@ export const createEvent = async (data: {
  * @returns {Promise<Event|null>}
  */
 export const getEventById = async (id: string): Promise<Event | null> => {
-  return prisma.event.findUnique({ where: { id } });
+  const event = await prisma.event.findUnique({ where: { id } });
+  return event ? toEvent(event) : null;
 };
 
 /**
@@ -37,7 +49,8 @@ export const getEventById = async (id: string): Promise<Event | null> => {
  * @returns {Promise<Event[]>}
  */
 export const getAllEvents = async (): Promise<Event[]> => {
-  return prisma.event.findMany();
+  const events = await prisma.event.findMany();
+  return events.map(toEvent);
 };
 
 /**
@@ -48,7 +61,8 @@ export const getAllEvents = async (): Promise<Event[]> => {
  */
 export const updateEvent = async (id: string, data: Partial<Event>): Promise<Event | null> => {
   try {
-    return await prisma.event.update({ where: { id }, data });
+    const event = await prisma.event.update({ where: { id }, data });
+    return toEvent(event);
   } catch {
     return null;
   }

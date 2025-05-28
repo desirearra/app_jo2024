@@ -16,14 +16,17 @@ describe('GET /api/users/me', () => {
   beforeAll(async () => {
     // Ensure the test user does not exist
     await prisma.user.deleteMany({ where: { email: testUser.email } });
-    // Register the test user
-    await request(app).post('/api/auth/register').send(testUser);
-    // Login to get JWT
-    const res = await request(app).post('/api/auth/login').send({
+    // Register user
+    const registerRes = await request(app).post('/api/auth/register').send(testUser);
+    expect([200, 201]).toContain(registerRes.status);
+    // Login user
+    const loginRes = await request(app).post('/api/auth/login').send({
       email: testUser.email,
       password: testUser.password,
     });
-    token = res.body.token;
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.token).toBeDefined();
+    token = loginRes.body.token;
   });
 
   afterAll(async () => {

@@ -46,14 +46,18 @@ describe('DELETE /api/users/:id', () => {
       },
     });
     // Register normal user via API
-    await request(app).post('/api/auth/register').send(normalUser);
+    const registerNormalRes = await request(app).post('/api/auth/register').send(normalUser);
+    expect([200, 201]).toContain(registerNormalRes.status);
     // Login admin via helper 2FA
     adminToken = await getAdminToken(adminUser.email, adminUser.password);
+    expect(adminToken).toBeDefined();
     // Login user
     const userRes = await request(app).post('/api/auth/login').send({
       email: normalUser.email,
       password: normalUser.password,
     });
+    expect(userRes.status).toBe(200);
+    expect(userRes.body.token).toBeDefined();
     userToken = userRes.body.token;
     userId = (await prisma.user.findUnique({ where: { email: normalUser.email } }))!.id;
   });

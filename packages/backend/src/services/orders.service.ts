@@ -1,5 +1,15 @@
-import { Order } from '@prisma/client';
+import { Order as PrismaOrder } from '@prisma/client';
+import type { Order } from '../types/models/order';
 import { prisma } from '../utils/prisma';
+
+function toOrder(o: PrismaOrder): Order {
+  return {
+    ...o,
+    totalAmount: o.totalAmount.toString(),
+    createdAt: o.createdAt.toISOString(),
+    updatedAt: o.updatedAt.toISOString(),
+  };
+}
 
 /**
  * Crée une nouvelle commande
@@ -18,13 +28,14 @@ export const createOrder = async ({
   offerId: string;
   totalAmount: number;
 }): Promise<Order> => {
-  return prisma.order.create({
+  const order = await prisma.order.create({
     data: {
       userId,
       offerId,
       totalAmount,
     },
   });
+  return toOrder(order);
 };
 
 /**
@@ -33,7 +44,8 @@ export const createOrder = async ({
  * @returns {Promise<Order | null>}
  */
 export const getOrderById = async (id: string): Promise<Order | null> => {
-  return prisma.order.findUnique({ where: { id } });
+  const order = await prisma.order.findUnique({ where: { id } });
+  return order ? toOrder(order) : null;
 };
 
 /**
@@ -41,7 +53,8 @@ export const getOrderById = async (id: string): Promise<Order | null> => {
  * @returns {Promise<Order[]>}
  */
 export const getAllOrders = async (): Promise<Order[]> => {
-  return prisma.order.findMany();
+  const orders = await prisma.order.findMany();
+  return orders.map(toOrder);
 };
 
 /**
@@ -52,10 +65,11 @@ export const getAllOrders = async (): Promise<Order[]> => {
  */
 export const updateOrder = async (id: string, data: Partial<Order>): Promise<Order | null> => {
   try {
-    return await prisma.order.update({
+    const order = await prisma.order.update({
       where: { id },
       data,
     });
+    return toOrder(order);
   } catch {
     return null;
   }
