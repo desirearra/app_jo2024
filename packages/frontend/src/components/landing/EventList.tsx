@@ -35,6 +35,11 @@ export function EventList() {
       <div className="flex-1 container mx-auto px-4 py-10">
         {/* En-tête de section */}
         <div className="flex flex-col items-center mb-16 animate-fade-in-up">
+          <img
+            src="https://img.olympics.com/images/image/private/w_300/f_auto/primary/gpo3co3bpkqsikyznrns"
+            alt="Logo JO Paris 2024"
+            className="w-40 h-auto mx-auto mb-2"
+          />
           <h2 className="text-4xl font-bold text-slate-900 mb-6">Participez aux événements</h2>
           <p className="text-xl text-slate-600 text-center max-w-3xl">
             Ne manquez pas l&apos;occasion unique d&apos; de participer aux événements sportifs les
