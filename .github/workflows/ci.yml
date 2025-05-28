@@ -55,6 +55,13 @@ jobs:
         env:
           DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
           SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
+          MASTER_KEY: dummy-master-key-for-ci
+          JWT_SECRET: dummy-jwt-secret-for-ci
+          SMTP_HOST: smtp.example.com
+          SMTP_PORT: "587"
+          SMTP_USER: test@example.com
+          SMTP_PASS: dummy
+          SMTP_FROM: noreply@example.com
 
   build:
     name: 🏗️ Build
@@ -81,3 +88,10 @@ jobs:
         run: npm run build --workspace=packages/backend
         env:
           DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
+          MASTER_KEY: dummy-master-key-for-ci
+          JWT_SECRET: dummy-jwt-secret-for-ci
+          SMTP_HOST: smtp.example.com
+          SMTP_PORT: "587"
+          SMTP_USER: test@example.com
+          SMTP_PASS: dummy
+          SMTP_FROM: noreply@example.com
