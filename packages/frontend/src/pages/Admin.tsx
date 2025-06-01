@@ -202,7 +202,6 @@ export default function AdminPage() {
             onEdit={async event => {
               try {
                 // On retire l'id du body pour la requête PUT (l'id est déjà dans l'URL)
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { id, ...eventData } = event;
                 const res = await put<Event>(`/api/events/${id}`, eventData);
                 setEvents(prev => prev.map(ev => (ev.id === id ? res.data : ev)));
