@@ -2,7 +2,7 @@ import { Request, Router } from 'express';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { z } from 'zod';
 import { config } from '../config';
-import { loginFileController, verify2FAFileController } from '../controllers/auth.controller';
+import { loginController, verify2FAController } from '../controllers/auth.controller';
 import { validateRequest } from '../middlewares/validateRequest';
 import { generateUserKey1, hashPassword } from '../services/auth.service';
 import { loginSchema, registerSchema, twoFAVerifySchema } from '../types/schemas/auth';
@@ -80,7 +80,7 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
  * @body LoginData (email, password)
  * @returns 200 + token | 400 | 401 | 500
  */
-router.post('/login', validateRequest(loginSchema), loginFileController);
+router.post('/login', validateRequest(loginSchema), loginController);
 
 /**
  * @route POST /api/auth/2fa/verify
@@ -89,6 +89,6 @@ router.post('/login', validateRequest(loginSchema), loginFileController);
  * @body twoFAVerifySchema (code)
  * @returns 200 | 400 | 500
  */
-router.post('/2fa/verify', validateRequest(twoFAVerifySchema), verify2FAFileController);
+router.post('/2fa/verify', validateRequest(twoFAVerifySchema), verify2FAController);
 
 export default router;

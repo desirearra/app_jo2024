@@ -1,17 +1,5 @@
 import nodemailer from 'nodemailer';
-
-/**
- * Send an email with a simple HTML template (mock: log only)
- * @param to string - recipient email
- * @param subject string - email subject
- * @param html string - HTML content
- * @returns Promise<void>
- */
-export const sendEmail = async (to: string, subject: string, html: string): Promise<void> => {
-  // Log the email sending (mock)
-  // In real usage, plug a real email provider here
-  console.log(`[EMAIL] To: ${to} | Subject: ${subject}\n${html}`);
-};
+import { logger } from '../utils/logger';
 
 /**
  * Render a simple HTML template for OTP/MFA
@@ -39,20 +27,24 @@ export const renderOtpTemplate = (code: string): string => {
  * @returns Promise<void>
  */
 export async function sendMail(to: string, subject: string, html: string): Promise<void> {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST, // ex: 'smtp.mailgun.org'
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: false, // true pour 465, false pour 587
-    auth: {
-      user: process.env.SMTP_USER, // ex: 'postmaster@tondomaine.mailgun.org'
-      pass: process.env.SMTP_PASS, // mot de passe SMTP Mailgun
-    },
-  });
-
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM || 'noreply@tondomaine.com',
-    to,
-    subject,
-    html,
-  });
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST, // ex: 'smtp.mailgun.org'
+      port: Number(process.env.SMTP_PORT) || 587,
+      secure: false, // true pour 465, false pour 587
+      auth: {
+        user: process.env.SMTP_USER, // ex: 'postmaster@tondomaine.mailgun.org'
+        pass: process.env.SMTP_PASS, // mot de passe SMTP Mailgun
+      },
+    });
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || 'noreply@tondomaine.com',
+      to,
+      subject,
+      html,
+    });
+  } catch (error) {
+    logger.error('Error sending email', error);
+    console.error(error);
+  }
 }

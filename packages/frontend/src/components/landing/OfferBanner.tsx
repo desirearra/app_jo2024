@@ -39,7 +39,7 @@ export function OfferBanner() {
               <div className="flex flex-col gap-4 w-full sm:flex-row sm:items-center sm:gap-6">
                 <Link
                   to="/offres"
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-white text-slate-900 rounded-full font-semibold inline-flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors hover:scale-105 active:scale-95 transition-transform text-base sm:text-lg"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-white text-slate-900 rounded-full font-semibold inline-flex items-center justify-center gap-2 hover:bg-slate-100 hover:scale-105 active:scale-95 transition-transform text-base sm:text-lg"
                 >
                   Découvrir les offres
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

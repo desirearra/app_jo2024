@@ -17,7 +17,7 @@ import { prisma } from '../utils/prisma';
  * @route POST /api/auth/login
  * @returns 200 JWT | 202 2FA_REQUIRED | 401 Unauthorized
  */
-export const loginFileController: RequestHandler = async (req: Request, res: Response) => {
+export const loginController: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     const user = await prisma.user.findUnique({ where: { email } });
@@ -42,6 +42,7 @@ export const loginFileController: RequestHandler = async (req: Request, res: Res
     return res.json({ token });
   } catch (error) {
     logger.error('Login error', error);
+    console.error(error);
     return res.status(400).json({ error: 'Invalid login data' });
   }
 };
@@ -51,7 +52,7 @@ export const loginFileController: RequestHandler = async (req: Request, res: Res
  * @route POST /api/auth/2fa/verify
  * @returns 200 JWT | 400 Invalid code/data | 401 Unauthorized
  */
-export const verify2FAFileController: RequestHandler = async (req: Request, res: Response) => {
+export const verify2FAController: RequestHandler = async (req: Request, res: Response) => {
   try {
     const { email, code } = twoFAVerifySchema.parse(req.body);
     const user = await prisma.user.findUnique({ where: { email } });
@@ -69,6 +70,7 @@ export const verify2FAFileController: RequestHandler = async (req: Request, res:
     return res.json({ token });
   } catch (error) {
     logger.error('2FA verify error', error);
+    console.error(error);
     return res.status(400).json({ error: 'Invalid 2FA data' });
   }
 };
