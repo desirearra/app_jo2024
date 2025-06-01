@@ -81,8 +81,9 @@ model Offer {
   isActive    Boolean   @default(true)
   event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     String?   @db.Uuid
-  orders      Order[]
+  orderItems  OrderItem[]
   tickets     Ticket[]
+  places      Int       @default(1) // Nombre de personnes couvertes par ce pass (1=Solo, 2=Duo, 4=Familial)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   isDeleted   Boolean   @default(false)
@@ -92,26 +93,39 @@ model Order {
   id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String       @db.Uuid
-  offer           Offer        @relation(fields: [offerId], references: [id], onDelete: Cascade)
-  offerId         String       @db.Uuid
   status          OrderStatus  @default(PENDING)
   transactionType String?
   transactionId   String?
   totalAmount     Decimal      @db.Decimal(10, 2)
   key2            String?
+  orderItems      OrderItem[]  // Une commande peut avoir plusieurs items (offres/pass)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   isDeleted       Boolean      @default(false)
+}
+
+model OrderItem {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    String   @db.Uuid
+  offer      Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  offerId    String   @db.Uuid
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  tickets    Ticket[] // Un item génère plusieurs tickets (ex: 2 Pass Duo = 2 tickets Duo)
 }
 
 model Ticket {
   id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String       @db.Uuid
+  orderItem  OrderItem    @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+  orderItemId String      @db.Uuid
   offer      Offer        @relation(fields: [offerId], references: [id], onDelete: Cascade)
   offerId    String       @db.Uuid
   finalKey   String       @unique // This is the QR code value
   status     TicketStatus @default(ACTIVE)
+  places     Int          // Nombre de personnes couvertes par ce ticket (hérité de l'offre)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   isDeleted  Boolean      @default(false)
