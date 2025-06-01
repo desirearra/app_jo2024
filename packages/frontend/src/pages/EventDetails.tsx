@@ -75,23 +75,6 @@ export function EventDetailsPage() {
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-white to-slate-50">
       {/* Lien de retour */}
-      <div className="absolute top-8 left-[23rem] z-20">
-        <Link
-          to="/evenements"
-          className="inline-flex items-center text-white hover:text-black-200 font-medium bg-black/40 rounded-full px-4 py-2 shadow-lg backdrop-blur transition-colors"
-          style={{ textShadow: '0 2px 8px rgba(0,0,0,0.7)' }}
-        >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          Retour à la liste des événements
-        </Link>
-      </div>
 
       {/* Hero Section */}
       <div className="relative h-[50vh] overflow-hidden">
@@ -116,6 +99,18 @@ export function EventDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Colonne de gauche - Description */}
           <div className="lg:col-span-2 animate-fade-in-up [animation-delay:200ms]">
+            <Link to="/evenements" className="inline-flex items-center text-black mb-6 underline">
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Retour à la liste des événements
+            </Link>
+
             <h2 className="text-3xl font-bold text-slate-900 mb-6">À propos de l&apos;événement</h2>
             {/* On pourrait ajouter une description longue si disponible plus tard */}
             <p className="text-lg text-slate-600 mb-8">{event.description}</p>
@@ -193,9 +188,9 @@ export function EventDetailsPage() {
             Offres disponibles pour cet événement
           </h2>
           {offers.length > 0 ? (
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col md:flex-row flex-wrap gap-4">
               {offers.map(offer => (
-                <div key={offer.id} className="w-full max-w-[32%]">
+                <div key={offer.id} className="w-full lg:max-w-[32%]">
                   <OfferCard
                     key={offer.id}
                     offer={{

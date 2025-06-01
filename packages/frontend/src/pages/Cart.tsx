@@ -38,7 +38,6 @@ export function CartPage() {
     }
     setLoading(true);
     try {
-      console.log('cart', cart);
       const items = cart.tickets.map(t => ({ offerId: t.offerId, quantity: t.quantity }));
       await createOrder(user.id, items);
       toast({

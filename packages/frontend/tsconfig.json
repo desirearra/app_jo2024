@@ -27,7 +27,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "prisma/seed.ts"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "exclude": ["node_modules", "src/__tests__", "**/*.test.tsx", "**/*.test.ts"]
 }

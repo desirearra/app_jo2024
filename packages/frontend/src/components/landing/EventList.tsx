@@ -1,12 +1,13 @@
 import { getEvents } from '@/lib/api';
 import type { Event } from '@/types';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function EventList() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -32,7 +33,9 @@ export function EventList() {
             alt="Logo JO Paris 2024"
             className="w-40 h-auto mx-auto mb-2"
           />
-          <h2 className="text-4xl font-bold text-slate-900 mb-6">Participez aux événements</h2>
+          <h2 className="text-4xl text-center font-bold text-slate-900 mb-6">
+            Participez aux événements
+          </h2>
           <p className="text-xl text-slate-600 text-center max-w-3xl">
             Ne manquez pas l&apos;occasion unique d&apos; de participer aux événements sportifs les
             plus excitants du monde.
@@ -49,8 +52,11 @@ export function EventList() {
             {events.map((event, index) => (
               <div
                 key={event.id}
-                className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
+                className="flex-1 cursor-pointer relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
                 style={{ animationDelay: `${200 + index * 200}ms` }}
+                onClick={() => {
+                  navigate(`/evenements/${event.id}`);
+                }}
               >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img

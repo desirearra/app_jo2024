@@ -10,6 +10,7 @@ jest.mock('react-router-dom', () => ({
   Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
     <a href={to}>{children}</a>
   ),
+  useNavigate: () => jest.fn(),
 }));
 
 jest.mock('@/lib/api');

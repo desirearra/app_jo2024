@@ -21,6 +21,20 @@ export const api: AxiosInstance = axios.create({
   },
 });
 
+api.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers['Authorization'] = `Bearer ${token}`;
+    } else if (config.headers && 'Authorization' in config.headers) {
+      delete config.headers['Authorization'];
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
 /**
  * Helper générique pour requête GET
  * @param url string - endpoint relatif (ex: '/offers')
@@ -28,9 +42,6 @@ export const api: AxiosInstance = axios.create({
  * @returns Promise<AxiosResponse<T>>
  */
 export function get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-  if (localStorage.getItem('token')) {
-    api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-  }
   return api.get<T>(url, config);
 }
 
@@ -120,7 +131,6 @@ export async function createOrder(
   userId: string,
   items: { offerId: string; quantity: number }[]
 ): Promise<Order> {
-  api.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
   const res = await post<Order>('/api/orders', { userId, items });
   return res.data;
 }

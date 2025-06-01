@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { get } from '@/lib/api';
 import type { Order, User } from '@/types';
-import axios from 'axios';
 import { Lock } from 'lucide-react';
 import QRCode from 'qrcode.react';
 import { useEffect, useState } from 'react';
@@ -35,8 +35,7 @@ export default function AccountPage() {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    axios
-      .get('/api/users/me')
+    get<UserMe>('/api/users/me')
       .then(res => {
         if (!isMounted) return;
         setUser(res.data);
@@ -58,7 +57,7 @@ export default function AccountPage() {
   }, []);
 
   // Optionnel : restriction par rôle
-  if (!isAuthenticated || authUser?.role !== 'USER') {
+  if (!isAuthenticated || authUser?.role?.toLowerCase() !== 'user') {
     return (
       <div className="flex flex-col justify-center items-center container mx-auto px-4 min-h-screen text-center py-12">
         <Lock className="w-10 h-10 mb-4" />
@@ -77,7 +76,7 @@ export default function AccountPage() {
   return (
     <div className="container mx-auto py-12 px-4 min-h-screen">
       <h1 className="text-3xl font-bold mb-8">Mon compte</h1>
-      <div className="flex gap-4 mb-8">
+      <div className="flex gap-2 sm:gap-4 mb-8 overflow-x-auto">
         <Button variant={tab === 'infos' ? 'default' : 'outline'} onClick={() => setTab('infos')}>
           Mes informations
         </Button>

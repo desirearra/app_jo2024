@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import { post } from '@/lib/api';
 import { loginSchema } from '@/types/schemas/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
@@ -46,7 +47,10 @@ export function LoginForm({ onSuccess, onForgotPassword }: LoginFormProps) {
     setSuccess(false);
     setTwoFA({ required: false, email: '' });
     try {
-      const res = await axios.post('/api/auth/login', data);
+      const res = await post<{ status: string; email: string; token: string }>(
+        '/api/auth/login',
+        data
+      );
       if (res.status === 202 && res.data?.status === '2FA_REQUIRED' && res.data?.email) {
         setTwoFA({ required: true, email: res.data.email });
         return;

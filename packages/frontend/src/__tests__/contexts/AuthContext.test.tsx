@@ -7,7 +7,31 @@ import React from 'react';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext';
 import * as api from '../../lib/api';
 
-jest.mock('../../lib/api');
+jest.mock('../../lib/api', () => ({
+  api: {
+    interceptors: {
+      request: { use: jest.fn() },
+    },
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+  get: jest.fn(url => {
+    if (url === '/api/users/me') {
+      return Promise.resolve({ data: mockUser });
+    }
+    return Promise.resolve({ data: {} });
+  }),
+  post: jest.fn(),
+  put: jest.fn(),
+  del: jest.fn(),
+  getEvents: jest.fn(),
+  getOffers: jest.fn(),
+  getOffersByEventId: jest.fn(),
+  loginUser: jest.fn(),
+  createOrder: jest.fn(),
+}));
 jest.mock('axios');
 
 const mockUser = {
@@ -19,6 +43,7 @@ const mockUser = {
 
 beforeEach(() => {
   (api.loginUser as jest.Mock).mockResolvedValue({ token: 'mock-token' });
+  // localStorage.setItem('token', 'mock-token');
   (axios.get as jest.Mock).mockImplementation(url => {
     if (url === '/api/users/me') return Promise.resolve({ data: mockUser });
     return Promise.reject(new Error('not mocked'));

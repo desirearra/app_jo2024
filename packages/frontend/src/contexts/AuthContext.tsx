@@ -1,5 +1,4 @@
-import { loginUser } from '@/lib/api';
-import axios from 'axios';
+import { get, loginUser } from '@/lib/api';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface User {
@@ -33,13 +32,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null;
   });
 
-  // Met à jour axios pour inclure le token dans les requêtes
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common['Authorization'];
-  }
-
   // Persistance du token
   useEffect(() => {
     if (token) {
@@ -54,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const fetchProfile = async () => {
       if (token) {
         try {
-          const res = await axios.get('/api/users/me');
+          const res = await get<User>('/api/users/me');
           setUser(res.data);
           setIsAuthenticated(true);
         } catch {

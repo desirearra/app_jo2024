@@ -164,280 +164,304 @@ export default function AdminPage() {
   }));
 
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Espace administration</h1>
-        <Button size="sm" variant="outline" onClick={handleRefresh}>
+    <div className="container mx-auto py-8 px-2 sm:px-4 min-h-screen">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Espace administration</h1>
+        <Button size="sm" variant="outline" onClick={handleRefresh} className="w-full sm:w-auto">
           Rafraichir les données
         </Button>
       </div>
       <Tabs defaultValue="dashboard" className="w-full">
-        <TabsList className="mb-8">
-          <TabsTrigger value="dashboard">Tableau de bord</TabsTrigger>
-          <TabsTrigger value="events">Événements</TabsTrigger>
-          <TabsTrigger value="offers">Offres</TabsTrigger>
-          <TabsTrigger value="orders">Commandes</TabsTrigger>
-          <TabsTrigger value="tickets">Billets</TabsTrigger>
-          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+        <TabsList className="mb-8 flex justify-start sm:flex-nowrap gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <TabsTrigger value="dashboard" className="min-w-[140px]">
+            Tableau de bord
+          </TabsTrigger>
+          <TabsTrigger value="events" className="min-w-[140px]">
+            Événements
+          </TabsTrigger>
+          <TabsTrigger value="offers" className="min-w-[140px]">
+            Offres
+          </TabsTrigger>
+          <TabsTrigger value="orders" className="min-w-[140px]">
+            Commandes
+          </TabsTrigger>
+          <TabsTrigger value="tickets" className="min-w-[140px]">
+            Billets
+          </TabsTrigger>
+          <TabsTrigger value="users" className="min-w-[140px]">
+            Utilisateurs
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="dashboard">
-          <DashboardTab stats={stats} sales={recentSales} revenueChartData={revenueChartData} />
+          <div className="overflow-x-auto">
+            <DashboardTab stats={stats} sales={recentSales} revenueChartData={revenueChartData} />
+          </div>
         </TabsContent>
         <TabsContent value="events">
-          <EventsTab
-            data={events}
-            onAdd={async event => {
-              try {
-                const res = await post<Event>('/api/events', event);
-                setEvents(prev => [...prev, res.data]);
-                toast({ title: 'Événement créé', description: "L'événement a bien été ajouté." });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de créer l'événement.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onEdit={async event => {
-              try {
-                // On retire l'id du body pour la requête PUT (l'id est déjà dans l'URL)
-                const { id, ...eventData } = event;
-                const res = await put<Event>(`/api/events/${id}`, eventData);
-                setEvents(prev => prev.map(ev => (ev.id === id ? res.data : ev)));
-                toast({
-                  title: 'Événement modifié',
-                  description: "L'événement a bien été modifié.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de modifier l'événement.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDelete={async event => {
-              try {
-                await del(`/api/events/${event.id}`);
-                setEvents(prev => prev.filter(ev => ev.id !== event.id));
-                toast({
-                  title: 'Événement supprimé',
-                  description: "L'événement a bien été supprimé.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de supprimer l'événement.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDisable={async event => {
-              try {
-                const res = await put<Event>(`/api/events/${event.id}`, {
-                  ...event,
-                  isDeleted: !event.isDeleted,
-                });
-                setEvents(prev => prev.map(ev => (ev.id === event.id ? res.data : ev)));
-                toast({
-                  title: res.data.isDeleted ? 'Événement désactivé' : 'Événement restauré',
-                  description: res.data.isDeleted
-                    ? "L'événement a bien été désactivé (soft delete)."
-                    : "L'événement a bien été restauré.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de changer le statut de l'événement.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-          />
+          <div className="overflow-x-auto">
+            <EventsTab
+              data={events}
+              onAdd={async event => {
+                try {
+                  const res = await post<Event>('/api/events', event);
+                  setEvents(prev => [...prev, res.data]);
+                  toast({ title: 'Événement créé', description: "L'événement a bien été ajouté." });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de créer l'événement.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onEdit={async event => {
+                try {
+                  // On retire l'id du body pour la requête PUT (l'id est déjà dans l'URL)
+                  const { id, ...eventData } = event;
+                  const res = await put<Event>(`/api/events/${id}`, eventData);
+                  setEvents(prev => prev.map(ev => (ev.id === id ? res.data : ev)));
+                  toast({
+                    title: 'Événement modifié',
+                    description: "L'événement a bien été modifié.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de modifier l'événement.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDelete={async event => {
+                try {
+                  await del(`/api/events/${event.id}`);
+                  setEvents(prev => prev.filter(ev => ev.id !== event.id));
+                  toast({
+                    title: 'Événement supprimé',
+                    description: "L'événement a bien été supprimé.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de supprimer l'événement.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDisable={async event => {
+                try {
+                  const res = await put<Event>(`/api/events/${event.id}`, {
+                    ...event,
+                    isDeleted: !event.isDeleted,
+                  });
+                  setEvents(prev => prev.map(ev => (ev.id === event.id ? res.data : ev)));
+                  toast({
+                    title: res.data.isDeleted ? 'Événement désactivé' : 'Événement restauré',
+                    description: res.data.isDeleted
+                      ? "L'événement a bien été désactivé (soft delete)."
+                      : "L'événement a bien été restauré.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de changer le statut de l'événement.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+            />
+          </div>
         </TabsContent>
         <TabsContent value="offers">
-          <OffersTab
-            data={offersForTab}
-            onAdd={async offer => {
-              const o = offer as OfferForm;
-              try {
-                const res = await post<Offer>('/api/offers', {
-                  name: o.name,
-                  description: o.description,
-                  type: o.type,
-                  price: o.price,
-                  seats: o.seats,
-                  eventId: o.eventId || null,
-                });
-                setOffers(prev => [...prev, res.data]);
-                toast({ title: 'Offre créée', description: "L'offre a bien été ajoutée." });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de créer l'offre.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onEdit={async offer => {
-              const o = offer as Offer;
-              try {
-                const res = await put<Offer>(`/api/offers/${o.id}`, {
-                  name: o.name,
-                  description: o.description,
-                  type: o.type,
-                  price: o.price,
-                  seats: o.seats,
-                  eventId: o.eventId || null,
-                  isActive: o.isActive,
-                });
-                setOffers(prev => prev.map(of => (of.id === o.id ? res.data : of)));
-                toast({ title: 'Offre modifiée', description: "L'offre a bien été modifiée." });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de modifier l'offre.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDelete={async offer => {
-              try {
-                await del(`/api/offers/${offer.id}`);
-                setOffers(prev => prev.filter(o => o.id !== offer.id));
-                toast({ title: 'Offre supprimée', description: "L'offre a bien été supprimée." });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de supprimer l'offre.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDisable={async offer => {
-              try {
-                const res = await put<Offer>(`/api/offers/${offer.id}`, {
-                  ...offer,
-                  isDeleted: !offer.isDeleted,
-                });
-                setOffers(prev => prev.map(o => (o.id === offer.id ? res.data : o)));
-                toast({
-                  title: res.data.isDeleted ? 'Offre désactivée' : 'Offre restaurée',
-                  description: res.data.isDeleted
-                    ? "L'offre a bien été désactivée (soft delete)."
-                    : "L'offre a bien été restaurée.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de changer le statut de l'offre.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            events={events}
-          />
+          <div className="overflow-x-auto">
+            <OffersTab
+              data={offersForTab}
+              onAdd={async offer => {
+                const o = offer as OfferForm;
+                try {
+                  const res = await post<Offer>('/api/offers', {
+                    name: o.name,
+                    description: o.description,
+                    type: o.type,
+                    price: o.price,
+                    seats: o.seats,
+                    eventId: o.eventId || null,
+                  });
+                  setOffers(prev => [...prev, res.data]);
+                  toast({ title: 'Offre créée', description: "L'offre a bien été ajoutée." });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de créer l'offre.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onEdit={async offer => {
+                const o = offer as Offer;
+                try {
+                  const res = await put<Offer>(`/api/offers/${o.id}`, {
+                    name: o.name,
+                    description: o.description,
+                    type: o.type,
+                    price: o.price,
+                    seats: o.seats,
+                    eventId: o.eventId || null,
+                    isActive: o.isActive,
+                  });
+                  setOffers(prev => prev.map(of => (of.id === o.id ? res.data : of)));
+                  toast({ title: 'Offre modifiée', description: "L'offre a bien été modifiée." });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de modifier l'offre.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDelete={async offer => {
+                try {
+                  await del(`/api/offers/${offer.id}`);
+                  setOffers(prev => prev.filter(o => o.id !== offer.id));
+                  toast({ title: 'Offre supprimée', description: "L'offre a bien été supprimée." });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de supprimer l'offre.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDisable={async offer => {
+                try {
+                  const res = await put<Offer>(`/api/offers/${offer.id}`, {
+                    ...offer,
+                    isDeleted: !offer.isDeleted,
+                  });
+                  setOffers(prev => prev.map(o => (o.id === offer.id ? res.data : o)));
+                  toast({
+                    title: res.data.isDeleted ? 'Offre désactivée' : 'Offre restaurée',
+                    description: res.data.isDeleted
+                      ? "L'offre a bien été désactivée (soft delete)."
+                      : "L'offre a bien été restaurée.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de changer le statut de l'offre.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              events={events}
+            />
+          </div>
         </TabsContent>
         <TabsContent value="orders">
-          <OrdersTab
-            data={orders as OrderWithItems[]}
-            onDelete={async order => {
-              try {
-                await del(`/api/orders/${order.id}`);
-                setOrders(prev => prev.filter(o => o.id !== order.id));
-                toast({
-                  title: 'Commande supprimée',
-                  description: 'La commande a bien été supprimée.',
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: 'Impossible de supprimer la commande.',
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDisable={async order => {
-              try {
-                const res = await put<OrderWithItems>(`/api/orders/${order.id}`, {
-                  ...order,
-                  isDeleted: !order.isDeleted,
-                });
-                setOrders(prev => prev.map(o => (o.id === order.id ? res.data : o)));
-                toast({
-                  title: res.data.isDeleted ? 'Commande désactivée' : 'Commande restaurée',
-                  description: res.data.isDeleted
-                    ? 'La commande a bien été désactivée (soft delete).'
-                    : 'La commande a bien été restaurée.',
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: 'Impossible de changer le statut de la commande.',
-                  variant: 'destructive',
-                });
-              }
-            }}
-            users={users}
-            onRefresh={handleRefresh}
-          />
+          <div className="overflow-x-auto">
+            <OrdersTab
+              data={orders as OrderWithItems[]}
+              onDelete={async order => {
+                try {
+                  await del(`/api/orders/${order.id}`);
+                  setOrders(prev => prev.filter(o => o.id !== order.id));
+                  toast({
+                    title: 'Commande supprimée',
+                    description: 'La commande a bien été supprimée.',
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: 'Impossible de supprimer la commande.',
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDisable={async order => {
+                try {
+                  const res = await put<OrderWithItems>(`/api/orders/${order.id}`, {
+                    ...order,
+                    isDeleted: !order.isDeleted,
+                  });
+                  setOrders(prev => prev.map(o => (o.id === order.id ? res.data : o)));
+                  toast({
+                    title: res.data.isDeleted ? 'Commande désactivée' : 'Commande restaurée',
+                    description: res.data.isDeleted
+                      ? 'La commande a bien été désactivée (soft delete).'
+                      : 'La commande a bien été restaurée.',
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: 'Impossible de changer le statut de la commande.',
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              users={users}
+              onRefresh={handleRefresh}
+            />
+          </div>
         </TabsContent>
         <TabsContent value="tickets">
-          <TicketsTab
-            tickets={orders.flatMap(order => order.orderItems.flatMap(item => item.tickets))}
-            users={users}
-            orders={orders}
-            onRefresh={handleRefresh}
-          />
+          <div className="overflow-x-auto">
+            <TicketsTab
+              tickets={orders.flatMap(order => order.orderItems.flatMap(item => item.tickets))}
+              users={users}
+              orders={orders}
+              onRefresh={handleRefresh}
+            />
+          </div>
         </TabsContent>
         <TabsContent value="users">
-          <UsersTab
-            data={usersForTab}
-            onDelete={async user => {
-              try {
-                await del(`/api/users/${user.id}`);
-                setUsers(prev => prev.filter(u => u.id !== user.id));
-                toast({
-                  title: 'Utilisateur supprimé',
-                  description: "L'utilisateur a bien été supprimé.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de supprimer l'utilisateur.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-            onDisable={async user => {
-              try {
-                const res = await put<User>(`/api/users/${user.id}`, {
-                  ...user,
-                  isDeleted: !user.isDeleted,
-                });
-                setUsers(prev =>
-                  prev.map(u =>
-                    u.id === user.id
-                      ? { ...res.data, status: res.data.isDeleted ? 'Inactif' : 'Actif' }
-                      : u
-                  )
-                );
-                toast({
-                  title: res.data.isDeleted ? 'Utilisateur désactivé' : 'Utilisateur restauré',
-                  description: res.data.isDeleted
-                    ? "L'utilisateur a bien été désactivé (soft delete)."
-                    : "L'utilisateur a bien été restauré.",
-                });
-              } catch (e) {
-                toast({
-                  title: 'Erreur',
-                  description: "Impossible de changer le statut de l'utilisateur.",
-                  variant: 'destructive',
-                });
-              }
-            }}
-          />
+          <div className="overflow-x-auto">
+            <UsersTab
+              data={usersForTab}
+              onDelete={async user => {
+                try {
+                  await del(`/api/users/${user.id}`);
+                  setUsers(prev => prev.filter(u => u.id !== user.id));
+                  toast({
+                    title: 'Utilisateur supprimé',
+                    description: "L'utilisateur a bien été supprimé.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de supprimer l'utilisateur.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+              onDisable={async user => {
+                try {
+                  const res = await put<User>(`/api/users/${user.id}`, {
+                    ...user,
+                    isDeleted: !user.isDeleted,
+                  });
+                  setUsers(prev =>
+                    prev.map(u =>
+                      u.id === user.id
+                        ? { ...res.data, status: res.data.isDeleted ? 'Inactif' : 'Actif' }
+                        : u
+                    )
+                  );
+                  toast({
+                    title: res.data.isDeleted ? 'Utilisateur désactivé' : 'Utilisateur restauré',
+                    description: res.data.isDeleted
+                      ? "L'utilisateur a bien été désactivé (soft delete)."
+                      : "L'utilisateur a bien été restauré.",
+                  });
+                } catch (e) {
+                  toast({
+                    title: 'Erreur',
+                    description: "Impossible de changer le statut de l'utilisateur.",
+                    variant: 'destructive',
+                  });
+                }
+              }}
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

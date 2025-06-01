@@ -15,8 +15,6 @@ function toPassTypeLabel(type: Offer['type']): 'day' | 'weekend' | 'week' | 'spe
       return 'weekend';
     case 'FAMILY':
       return 'week';
-    default:
-      return 'special';
   }
 }
 
@@ -92,7 +90,7 @@ export function OffersPage() {
     <section className="flex flex-col min-h-screen bg-gradient-to-b from-white to-slate-50">
       <div className="flex-1 container mx-auto px-8 py-10">
         {/* En-tête de section */}
-        <div className="flex flex-col items-center my-16 animate-fade-in-up">
+        <div className="flex flex-col text-center items-center my-16 animate-fade-in-up">
           <h2 className="text-4xl font-bold text-slate-900 mb-6">
             Billets officiels des JO Paris 2024
           </h2>
@@ -119,7 +117,7 @@ export function OffersPage() {
           ) : filteredOffers.length > 0 ? (
             <div className="flex flex-wrap gap-4">
               {filteredOffers.map(offer => (
-                <div key={offer.id} className="w-full max-w-[32%]">
+                <div key={offer.id} className="w-full xl:max-w-[32%]">
                   <OfferCard
                     offer={{
                       id: offer.id,

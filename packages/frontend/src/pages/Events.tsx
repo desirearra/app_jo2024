@@ -1,13 +1,14 @@
 import { getEvents } from '@/lib/api';
 import type { Event as ApiEvent } from '@/types';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export function EventsPage() {
   const [events, setEvents] = useState<ApiEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +31,9 @@ export function EventsPage() {
       <div className="flex-1 container mx-auto px-4 py-10">
         {/* En-tête de section */}
         <div className="flex flex-col items-center mb-16 animate-fade-in-up">
-          <h2 className="text-4xl font-bold text-slate-900 mb-6">Événements JO Paris 2024</h2>
+          <h2 className="text-4xl text-center font-bold text-slate-900 mb-6">
+            Événements JO Paris 2024
+          </h2>
           <p className="text-xl text-slate-600 text-center max-w-3xl">
             Découvrez tous les événements des Jeux Olympiques et réservez vos places dès maintenant.
           </p>
@@ -59,8 +62,11 @@ export function EventsPage() {
               return (
                 <div
                   key={event.id}
-                  className="flex-1 relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
+                  className="flex-1 cursor-pointer relative overflow-hidden rounded-2xl shadow-lg bg-white hover:shadow-xl transition-shadow duration-300 animate-fade-in-up"
                   style={{ animationDelay: `${400 + index * 100}ms` }}
+                  onClick={() => {
+                    navigate(`/evenements/${event.id}`);
+                  }}
                 >
                   <div className="aspect-[4/3] overflow-hidden">
                     <img

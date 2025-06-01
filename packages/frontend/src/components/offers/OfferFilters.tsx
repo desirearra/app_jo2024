@@ -22,7 +22,6 @@ const passTypeOptions = [
   { value: 'day', label: 'Pass Journée' },
   { value: 'weekend', label: 'Pass Week-end' },
   { value: 'week', label: 'Pass Semaine' },
-  { value: 'special', label: 'Pass Spécial' },
 ];
 
 export function OfferFilters({ onFilterChange, filters }: OfferFiltersProps) {
@@ -38,11 +37,11 @@ export function OfferFilters({ onFilterChange, filters }: OfferFiltersProps) {
   const maxPrice = filters.maxPrice && filters.maxPrice > 0 ? filters.maxPrice : '';
 
   return (
-    <div className="flex flex-wrap gap-2 md:gap-4 items-end bg-card rounded-lg p-4 md:flex-nowrap overflow-x-auto">
+    <div className="flex flex-wrap gap-2 md:gap-4 items-end bg-card rounded-lg  md:flex-nowrap overflow-x-auto">
       {/* Recherche */}
       <Input
         id="search"
-        className="w-40 min-w-[140px] lg:w-[420px]"
+        className="w-full min-w-[140px]  xl:w-[420px]"
         placeholder="Rechercher..."
         value={filters.search || ''}
         onChange={e => handleChange('search', e.target.value)}

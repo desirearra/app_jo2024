@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { post } from '@/lib/api';
 import { registerSchema } from '@/types/schemas/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
@@ -66,7 +67,10 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
   const onSubmit = async (data: RegisterFormValues) => {
     setApiError(null);
     try {
-      const res = await axios.post('/api/auth/register', data);
+      const res = await post<{ token: string }>('/api/auth/register', {
+        ...data,
+        password: data.password.trim(),
+      });
       if (res.data?.token) {
         loginWithToken(res.data.token);
         toast({
