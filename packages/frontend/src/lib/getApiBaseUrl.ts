@@ -7,6 +7,10 @@ export const getApiBaseUrl = (): string => {
   if (typeof process !== 'undefined' && process.env && process.env.VITE_API_URL) {
     return process.env.VITE_API_URL;
   }
+  // only for deployment
+  // if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+  //   return import.meta.env.VITE_API_URL;
+  // }
 
   // Valeur par défaut
   return 'http://localhost:3000';

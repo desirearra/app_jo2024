@@ -10,7 +10,7 @@
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",
     "test:coverage": "jest --config jest.config.cjs --coverage",
-    "deploy": "fly deploy --build-arg VITE_API_URL=https://backend-jo2024-test-db.fly.dev",
+    "deploy": "fly deploy",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
