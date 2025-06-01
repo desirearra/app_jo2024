@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ForgotPasswordModal } from './ForgotPasswordModal';
 import { LoginModal } from './LoginModal';
 import { RegisterModal } from './RegisterModal';
 
@@ -8,7 +9,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgot'>('login');
 
   if (mode === 'login') {
     return (
@@ -16,10 +17,23 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         isOpen={isOpen}
         onClose={onClose}
         onSwitchToRegister={() => setMode('register')}
+        onForgotPassword={() => setMode('forgot')}
       />
     );
   }
-  return (
-    <RegisterModal isOpen={isOpen} onClose={onClose} onSwitchToLogin={() => setMode('login')} />
-  );
+  if (mode === 'register') {
+    return (
+      <RegisterModal isOpen={isOpen} onClose={onClose} onSwitchToLogin={() => setMode('login')} />
+    );
+  }
+  if (mode === 'forgot') {
+    return (
+      <ForgotPasswordModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onBackToLogin={() => setMode('login')}
+      />
+    );
+  }
+  return null;
 }

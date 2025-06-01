@@ -9,15 +9,15 @@ import {
 } from '@/components/ui/dialog';
 import { LogIn } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { RegisterForm } from './RegisterForm';
+import { ForgotPasswordForm } from './ForgotPasswordForm';
 
-interface RegisterModalProps {
+interface ForgotPasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToLogin: () => void;
+  onBackToLogin: () => void;
 }
 
-export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModalProps) {
+export function ForgotPasswordModal({ isOpen, onClose, onBackToLogin }: ForgotPasswordModalProps) {
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -29,22 +29,22 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModa
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <DialogTitle>Créer un compte</DialogTitle>
+            <DialogTitle>Mot de passe oublié</DialogTitle>
           </div>
           <DialogDescription>
-            Inscrivez-vous pour commander vos billets et profiter de tous les avantages.
+            Saisissez votre email pour recevoir un lien de réinitialisation.
           </DialogDescription>
         </DialogHeader>
-        <RegisterForm onSuccess={onClose} />
+        <ForgotPasswordForm onSuccess={onClose} />
         <DialogFooter className="flex flex-col gap-2">
           <Button
             ref={firstButtonRef}
             variant="outline"
-            onClick={onSwitchToLogin}
+            onClick={onBackToLogin}
             className="w-full"
             type="button"
           >
-            <LogIn className="mr-2 h-4 w-4" /> Se connecter
+            <LogIn className="mr-2 h-4 w-4" /> Retour à la connexion
           </Button>
         </DialogFooter>
       </DialogContent>
