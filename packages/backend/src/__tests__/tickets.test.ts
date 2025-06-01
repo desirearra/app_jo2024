@@ -80,9 +80,11 @@ beforeAll(async () => {
   const order = await prisma.order.create({
     data: {
       userId,
-      offerId,
       totalAmount: 99.99,
       key2: 'ORDERKEY2',
+      orderItems: {
+        create: [{ offerId, quantity: 1, unitPrice: 99.99 }],
+      },
     },
   });
   orderId = order.id;

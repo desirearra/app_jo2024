@@ -34,10 +34,9 @@ describe('POST /api/auth/register', () => {
       password: 'SuperSecret123!',
     });
     expect(res.status).toBe(201);
-    expect(res.body).toHaveProperty('id');
-    expect(res.body).toHaveProperty('email', 'testuser@example.com');
-    expect(res.body).not.toHaveProperty('password');
-    expect(res.body).toHaveProperty('key1');
+    expect(res.body).toHaveProperty('token');
+    expect(typeof res.body.token).toBe('string');
+    // Optionnel : décoder le token et vérifier le payload si besoin
   });
 
   it('should reject weak passwords', async () => {

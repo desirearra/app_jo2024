@@ -43,5 +43,25 @@ describe('GET /api/users/me', () => {
     expect(res.body.firstName).toBe(testUser.firstName);
     expect(res.body.lastName).toBe(testUser.lastName);
     expect(res.body).not.toHaveProperty('password');
+    // Vérifie la présence des commandes et tickets
+    expect(res.body).toHaveProperty('orders');
+    expect(Array.isArray(res.body.orders)).toBe(true);
+    expect(res.body).toHaveProperty('tickets');
+    expect(Array.isArray(res.body.tickets)).toBe(true);
+    // Vérifie la structure d'un élément si présent
+    if (res.body.orders.length > 0) {
+      expect(res.body.orders[0]).toHaveProperty('id');
+      expect(res.body.orders[0]).toHaveProperty('offerId');
+      expect(res.body.orders[0]).toHaveProperty('status');
+      expect(res.body.orders[0]).toHaveProperty('totalAmount');
+      expect(res.body.orders[0]).toHaveProperty('createdAt');
+    }
+    if (res.body.tickets.length > 0) {
+      expect(res.body.tickets[0]).toHaveProperty('id');
+      expect(res.body.tickets[0]).toHaveProperty('offerId');
+      expect(res.body.tickets[0]).toHaveProperty('finalKey');
+      expect(res.body.tickets[0]).toHaveProperty('status');
+      expect(res.body.tickets[0]).toHaveProperty('createdAt');
+    }
   });
 });
