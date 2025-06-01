@@ -1,247 +1,272 @@
 import { ConfirmDeleteModal } from '@/components/admin';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { useToast } from '@/hooks/use-toast';
-import { generateFinalKey, generateOrderKey2, generateUserKey1 } from '@/lib/utils';
-import { KeyRound, Trash } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import type { OrderWithItems, User } from '@/types';
+import { Eye } from 'lucide-react';
 import * as React from 'react';
 
-type Order = {
-  id: string;
-  user: string;
-  date: string;
-  total: string;
-  status: string;
+// Props du composant
+export type OrdersTabProps = {
+  data: OrderWithItems[];
+  onDelete: (order: OrderWithItems) => void;
+  onDisable: (order: OrderWithItems) => void;
+  users?: User[];
+  onRefresh?: () => void;
 };
 
-type OrdersTabProps = {
-  data: Order[];
-  onDelete: (order: Order) => void;
-};
-
-export function OrdersTab({ data, onDelete }: OrdersTabProps) {
-  const { toast } = useToast();
-  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
-  const [orderToDelete, setOrderToDelete] = React.useState<Order | null>(null);
-  const [verifyModalOpen, setVerifyModalOpen] = React.useState(false);
-  const [orderToVerify, setOrderToVerify] = React.useState<Order | null>(null);
-  const [keyInfo, setKeyInfo] = React.useState<{
-    key1: string;
-    key2: string;
-    finalKey: string;
-  } | null>(null);
-  const [isDecrypted, setIsDecrypted] = React.useState(false);
-  const [finalKeys, setFinalKeys] = React.useState<Record<string, string>>({});
-  // Simule l'authenticité du billet (à remplacer par une vraie vérification plus tard)
-  const isAuthentic = true; // Mettre à false pour tester le bouton "Bloquer le billet"
-  const [isBlocked, setIsBlocked] = React.useState(false);
+export function OrdersTab({ data, onDelete, onDisable, users = [] }: OrdersTabProps) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
+  const [selectedOrder, setSelectedOrder] = React.useState<OrderWithItems | null>(null);
+  const [actionModalOpen, setActionModalOpen] = React.useState(false);
+  const [orderToAction, setOrderToAction] = React.useState<OrderWithItems | null>(null);
+  const [pendingAction, setPendingAction] = React.useState<'disable' | 'delete' | null>(null);
+  const [choiceOpen, setChoiceOpen] = React.useState(false);
+  const [search, setSearch] = React.useState('');
 
-  // Mock user info (à remplacer par recherche réelle plus tard)
-  const mockUser = {
-    id: 'USR-001',
-    name: 'Olivia Martin',
-    email: 'olivia.martin@email.com',
-    date: '2024-01-01T10:00:00.000Z',
-  };
-
-  const handleVerify = async (order: Order) => {
-    // Génération des clés mockées
-    const key1 = await generateUserKey1(mockUser.email, mockUser.id, mockUser.date);
-    const key2 = await generateOrderKey2(order.id, order.date, order.total);
-    const finalKey = await generateFinalKey(key1, key2);
-    setKeyInfo({ key1, key2, finalKey });
-    setOrderToVerify(order);
-    setIsDecrypted(false);
-    setVerifyModalOpen(true);
-  };
-
-  React.useEffect(() => {
-    // Calculer les clés finales pour chaque commande au montage ou changement de data
-    const computeKeys = async () => {
-      const keys: Record<string, string> = {};
-      for (const order of data) {
-        // Utilise le même mockUser que la modale (à remplacer par vrai user plus tard)
-        const key1 = await generateUserKey1(mockUser.email, mockUser.id, mockUser.date);
-        const key2 = await generateOrderKey2(order.id, order.date, order.total);
-        const finalKey = await generateFinalKey(key1, key2);
-        keys[order.id] = finalKey;
-      }
-      setFinalKeys(keys);
-    };
-    computeKeys();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
+  // Colonnes du tableau (DataTable)
   const columns = [
-    { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'user', header: 'Utilisateur' },
-    { accessorKey: 'date', header: 'Date' },
-    { accessorKey: 'total', header: 'Total' },
-    { accessorKey: 'status', header: 'Statut' },
     {
-      id: 'finalKey',
-      header: 'Clé finale (partielle)',
-      cell: ({ row }: { row: { original: Order } }) => (
-        <span className="font-mono text-xs">{finalKeys[row.original.id]?.slice(0, 16) || '—'}</span>
+      accessorKey: 'id',
+      header: 'ID',
+      cell: ({ row }: { row: { original: OrderWithItems } }) => (
+        <span className="font-mono text-xs">{row.original.id}</span>
       ),
+    },
+    {
+      id: 'user',
+      header: 'Utilisateur',
+      cell: ({ row }: { row: { original: OrderWithItems } }) => {
+        const user = users.find(u => u.id === row.original.userId);
+        return user ? `${user.firstName} ${user.lastName}` : row.original.userId;
+      },
+    },
+    {
+      accessorKey: 'status',
+      header: 'Statut',
+      cell: ({ row }: { row: { original: OrderWithItems } }) => (
+        <StatusBadge status={row.original.status} type="order" />
+      ),
+    },
+    {
+      accessorKey: 'totalAmount',
+      header: 'Total',
+      cell: ({ row }: { row: { original: OrderWithItems } }) => `${row.original.totalAmount} €`,
+    },
+    {
+      id: 'createdAt',
+      header: 'Date',
+      cell: ({ row }: { row: { original: OrderWithItems } }) =>
+        new Date(row.original.createdAt).toLocaleDateString('fr-FR'),
     },
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }: { row: { original: Order } }) => (
+      cell: ({ row }: { row: { original: OrderWithItems } }) => (
         <div className="flex gap-2">
           <Button
             size="sm"
             variant="outline"
-            aria-label="Vérifier la clé"
-            onClick={async () => {
-              await handleVerify(row.original);
+            aria-label="Détail"
+            onClick={() => {
+              setSelectedOrder(row.original);
+              setSheetOpen(true);
             }}
           >
-            <KeyRound className="h-4 w-4 mr-1" />
-            Vérifier la clé
+            <Eye className="h-4 w-4" />
           </Button>
           <Button
             size="sm"
             variant="destructive"
-            aria-label="Supprimer"
+            aria-label="Actions"
             onClick={() => {
-              setOrderToDelete(row.original);
-              setDeleteModalOpen(true);
+              setOrderToAction(row.original);
+              setPendingAction(null);
+              setChoiceOpen(true);
             }}
           >
-            <Trash className="h-4 w-4" />
+            Actions
           </Button>
         </div>
       ),
     },
   ];
 
+  // Filtrage avancé (KISS)
+  const filteredOrders = data.filter(order => {
+    const user = users.find(u => u.id === order.userId);
+    const userName = user ? `${user.firstName} ${user.lastName}` : '';
+    const cleanSearch = search.trim().toLowerCase();
+    return (
+      order.id.toLowerCase().includes(cleanSearch) ||
+      order.status.toLowerCase().includes(cleanSearch) ||
+      order.totalAmount.toLowerCase().includes(cleanSearch) ||
+      new Date(order.createdAt).toLocaleDateString('fr-FR').includes(cleanSearch) ||
+      userName.toLowerCase().includes(cleanSearch) ||
+      order.userId.toLowerCase().includes(cleanSearch)
+    );
+  });
+
+  // Popin de choix d'action (désactiver/supprimer)
+  const renderChoiceMenu = () => (
+    <>
+      {choiceOpen && orderToAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded shadow-lg p-6 w-full max-w-xs flex flex-col gap-4">
+            <h3 className="text-lg font-semibold mb-2">Action sur la commande</h3>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setPendingAction('delete');
+                setChoiceOpen(false);
+                setActionModalOpen(true);
+              }}
+              className="w-full"
+            >
+              Supprimer définitivement
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setChoiceOpen(false);
+                setOrderToAction(null);
+              }}
+              className="w-full"
+            >
+              Annuler
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">Gestion des commandes</h2>
       </div>
-      <DataTable columns={columns} data={data} searchPlaceholder="Rechercher une commande..." />
-      <ConfirmDeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        onConfirm={() => {
-          if (orderToDelete) onDelete(orderToDelete);
-          setDeleteModalOpen(false);
-        }}
-        entityLabel="commande"
+      <DataTable
+        columns={columns}
+        data={filteredOrders}
+        searchPlaceholder="Rechercher une commande, utilisateur, statut..."
+        searchValue={search}
+        onSearchChange={setSearch}
       />
-      <Dialog open={verifyModalOpen} onOpenChange={setVerifyModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Vérification de la clé</DialogTitle>
-            <DialogDescription>
-              Vérifiez les informations de la commande, de l&apos;utilisateur et la clé générée.
-            </DialogDescription>
-          </DialogHeader>
-          {orderToVerify && keyInfo && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                {isAuthentic && !isBlocked ? (
-                  <span className="inline-block px-2 py-1 rounded bg-green-200 text-green-800 text-xs font-bold">
-                    Billet officiel
-                  </span>
-                ) : isBlocked ? (
-                  <span className="inline-block px-2 py-1 rounded bg-red-200 text-red-800 text-xs font-bold">
-                    Billet bloqué
-                  </span>
-                ) : (
-                  <span className="inline-block px-2 py-1 rounded bg-yellow-200 text-yellow-800 text-xs font-bold">
-                    Billet non authentique
-                  </span>
-                )}
-              </div>
-              <div>
-                <span className="font-semibold">Clé finale :</span>
-                <div className="break-all text-xs bg-green-100 rounded p-1 mt-1 font-mono">
-                  {keyInfo.finalKey}
-                </div>
-              </div>
-              {!isAuthentic && !isBlocked && (
-                <Button
-                  variant="destructive"
-                  className="mt-2"
-                  onClick={() => {
-                    setIsBlocked(true);
-                    toast({
-                      title: 'Billet bloqué',
-                      description: 'Le billet a été bloqué avec succès.',
-                    });
-                  }}
-                >
-                  Bloquer le billet
-                </Button>
-              )}
-              <Button
-                variant="default"
-                className="mt-2"
-                onClick={() => setIsDecrypted(true)}
-                disabled={isDecrypted}
-              >
-                Déchiffrer la clé
-              </Button>
-              {isDecrypted && (
-                <div className="space-y-2 mt-4">
-                  <div>
-                    <span className="font-semibold">Commande :</span> {orderToVerify.id} —{' '}
-                    {orderToVerify.date} — {orderToVerify.total}
-                  </div>
-                  <div>
-                    <span className="font-semibold">Utilisateur :</span> {mockUser.name} (
-                    {mockUser.email})
-                  </div>
-                  <div>
-                    <span className="font-semibold">Clé 1 (user) :</span>
-                    <div className="break-all text-xs bg-slate-100 rounded p-1 mt-1">
-                      {keyInfo.key1}
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-semibold">Clé 2 (commande) :</span>
-                    <div className="break-all text-xs bg-slate-100 rounded p-1 mt-1">
-                      {keyInfo.key2}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Fermer</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent>
+        <SheetContent className="w-full max-w-lg">
           <DialogTitle asChild>
-            <h2 className="text-xl font-bold mb-2">Détails de la commande</h2>
+            <h2 className="text-xl font-bold mb-2">Détail de la commande</h2>
           </DialogTitle>
           <DialogDescription>
-            Informations détaillées sur la commande sélectionnée.
+            Informations détaillées sur la commande sélectionnée et ses billets associés.
           </DialogDescription>
           <div className="h-px bg-slate-200 my-4" />
-          {orderToVerify && <form className="space-y-3">{/* ... champs ... */}</form>}
+          {selectedOrder && (
+            <form className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold mb-1">ID</label>
+                <Input
+                  value={selectedOrder.id}
+                  readOnly
+                  className="bg-slate-100 font-mono text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1">Utilisateur</label>
+                <Input
+                  value={(() => {
+                    const user = users.find(u => u.id === selectedOrder.userId);
+                    return user ? `${user.firstName} ${user.lastName}` : selectedOrder.userId;
+                  })()}
+                  readOnly
+                  className="bg-slate-100"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1">Statut</label>
+                <Input value={selectedOrder.status} readOnly className="bg-slate-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1">Total</label>
+                <Input value={`${selectedOrder.totalAmount} €`} readOnly className="bg-slate-100" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1">Date</label>
+                <Input
+                  value={new Date(selectedOrder.createdAt).toLocaleString('fr-FR')}
+                  readOnly
+                  className="bg-slate-100"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mt-8">Billets associés</label>
+                <ul className="list-disc ml-6 mt-2">
+                  {selectedOrder.orderItems.flatMap(item =>
+                    item.tickets.map(ticket => (
+                      <li key={ticket.id} className="mb-1 flex items-center gap-2">
+                        <span className="font-mono text-xs">{ticket.id}</span> —
+                        <span className="ml-2">
+                          Statut : <StatusBadge status={ticket.status} type="ticket" />
+                        </span>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
+            </form>
+          )}
         </SheetContent>
       </Sheet>
+      {renderChoiceMenu()}
+      <ConfirmDeleteModal
+        open={actionModalOpen}
+        onOpenChange={open => {
+          setActionModalOpen(open);
+          if (!open) {
+            setPendingAction(null);
+            setOrderToAction(null);
+          }
+        }}
+        onConfirm={() => {
+          if (orderToAction && pendingAction) {
+            if (pendingAction === 'disable') {
+              onDisable(orderToAction);
+            }
+            if (pendingAction === 'delete') {
+              onDelete(orderToAction);
+            }
+          }
+          setActionModalOpen(false);
+          setPendingAction(null);
+          setOrderToAction(null);
+        }}
+        entityLabel={orderToAction ? `la commande n°${orderToAction.id}` : 'cette commande'}
+        actionLabel={
+          pendingAction === 'disable'
+            ? orderToAction?.isDeleted
+              ? 'Restaurer'
+              : 'Désactiver'
+            : 'Supprimer définitivement'
+        }
+        actionVariant={
+          pendingAction === 'disable'
+            ? orderToAction?.isDeleted
+              ? 'default'
+              : 'destructive'
+            : 'destructive'
+        }
+        confirmMessage={
+          pendingAction === 'disable'
+            ? orderToAction?.isDeleted
+              ? `Voulez-vous vraiment restaurer la commande n°${orderToAction?.id ?? ''} ?`
+              : `Voulez-vous vraiment désactiver la commande n°${orderToAction?.id ?? ''} ?`
+            : `Voulez-vous vraiment supprimer définitivement la commande n°${orderToAction?.id ?? ''} ?`
+        }
+      />
     </div>
   );
 }

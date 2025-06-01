@@ -3,22 +3,65 @@ import { OfferBanner } from '@/components/landing/OfferBanner';
 import { Button } from '@/components/ui/button';
 import { useApp } from '@/contexts/AppContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { createOrder } from '@/lib/api';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function CartPage() {
-  const { isAuthenticated } = useAuth();
-  const { cart, removeTicketFromCart, updateTicketQuantity } = useApp();
+  const { isAuthenticated, user } = useAuth();
+  const { cart, removeTicketFromCart, updateTicketQuantity, clearCart } = useApp();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const total = cart.totalAmount;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!isAuthenticated) {
       setIsAuthModalOpen(true);
       return;
     }
-    // TODO: Implémenter la logique de paiement
+    if (!user?.id) {
+      toast({
+        title: 'Erreur',
+        description: 'Utilisateur non authentifié',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (cart.tickets.length === 0) {
+      toast({ title: 'Panier vide', description: 'Ajoutez des billets avant de commander.' });
+      return;
+    }
+    setLoading(true);
+    try {
+      console.log('cart', cart);
+      const items = cart.tickets.map(t => ({ offerId: t.offerId, quantity: t.quantity }));
+      await createOrder(user.id, items);
+      toast({
+        title: 'Commande validée',
+        description: 'Votre commande a bien été enregistrée ! 🎉',
+      });
+      clearCart();
+      setTimeout(() => {
+        if (user?.role === 'ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate('/compte');
+        }
+      }, 1000);
+    } catch (err) {
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de valider la commande',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,8 +137,12 @@ export function CartPage() {
                     <span>{total}€</span>
                   </div>
                 </div>
-                <Button className="w-full mt-6" onClick={handleCheckout}>
-                  {isAuthenticated ? 'Passer la commande' : 'Se connecter pour commander'}
+                <Button className="w-full mt-6" onClick={handleCheckout} disabled={loading}>
+                  {isAuthenticated
+                    ? loading
+                      ? 'Traitement...'
+                      : 'Passer la commande'
+                    : 'Se connecter pour commander'}
                 </Button>
               </div>
             </div>

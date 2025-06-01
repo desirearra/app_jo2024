@@ -1,29 +1,27 @@
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
+import type { Offer } from '@/types';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Pencil, Trash } from 'lucide-react';
-
-type Offer = {
-  id: string;
-  title: string;
-  type: string;
-  price: string;
-  status: string;
-};
+import { Pencil } from 'lucide-react';
 
 type OffersTableProps = {
   data: Offer[];
   onEdit: (offer: Offer) => void;
-  onDelete: (offer: Offer) => void;
+  onAction: (offer: Offer) => void;
 };
 
-export function OffersTable({ data, onEdit, onDelete }: OffersTableProps) {
+export function OffersTable({ data, onEdit, onAction }: OffersTableProps) {
   const columns: ColumnDef<Offer>[] = [
     { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'title', header: 'Titre' },
+    { accessorKey: 'name', header: 'Titre' },
+    { accessorKey: 'seats', header: 'Nombre de places' },
     { accessorKey: 'type', header: 'Type' },
-    { accessorKey: 'price', header: 'Prix' },
-    { accessorKey: 'status', header: 'Statut' },
+    { accessorKey: 'price', header: 'Prix (€)' },
+    {
+      id: 'status',
+      header: 'Statut',
+      cell: ({ row }) => (row.original.isDeleted ? 'Brouillon' : 'Publié'),
+    },
     {
       id: 'actions',
       header: 'Actions',
@@ -41,10 +39,10 @@ export function OffersTable({ data, onEdit, onDelete }: OffersTableProps) {
           <Button
             size="sm"
             variant="destructive"
-            aria-label="Supprimer"
-            onClick={() => onDelete(row.original)}
+            aria-label="Actions"
+            onClick={() => onAction(row.original)}
           >
-            <Trash className="h-4 w-4" />
+            Actions
           </Button>
         </div>
       ),

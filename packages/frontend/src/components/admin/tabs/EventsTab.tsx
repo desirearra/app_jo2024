@@ -5,28 +5,42 @@ import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import type { Event } from '@/types';
-import { Pencil, Trash } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import * as React from 'react';
 
 type EventsTabProps = {
   data: Event[];
-  onDelete: (event: Event) => void;
+  onAdd: (event: Omit<Event, 'id'>) => void | Promise<void>;
+  onEdit: (event: Event) => void | Promise<void>;
+  onDelete: (event: Event) => void | Promise<void>;
+  onDisable: (event: Event) => void | Promise<void>;
 };
 
-export function EventsTab({ data, onDelete }: EventsTabProps) {
+export function EventsTab({ data, onAdd, onEdit, onDelete, onDisable }: EventsTabProps) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [sheetMode, setSheetMode] = React.useState<'add' | 'edit'>('add');
   const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
-  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
-  const [eventToDelete, setEventToDelete] = React.useState<Event | null>(null);
+  const [actionModalOpen, setActionModalOpen] = React.useState(false);
+  const [eventToAction, setEventToAction] = React.useState<Event | null>(null);
+  const [pendingAction, setPendingAction] = React.useState<'disable' | 'delete' | null>(null);
+  const [choiceOpen, setChoiceOpen] = React.useState(false);
 
   const columns = [
     { accessorKey: 'id', header: 'ID' },
-    { accessorKey: 'title', header: 'Titre' },
-    { accessorKey: 'date', header: 'Date' },
-    { accessorKey: 'lieu', header: 'Lieu' },
-    { accessorKey: 'price', header: 'Prix' },
-    { accessorKey: 'status', header: 'Statut' },
+    { accessorKey: 'name', header: 'Titre' },
+    {
+      id: 'date',
+      header: 'Date',
+      cell: ({ row }: { row: { original: Event } }) =>
+        new Date(row.original.date).toLocaleDateString('fr-FR'),
+    },
+    { accessorKey: 'location', header: 'Lieu' },
+    {
+      id: 'status',
+      header: 'Statut',
+      cell: ({ row }: { row: { original: Event } }) =>
+        row.original.isDeleted ? 'Fermé' : 'Ouvert',
+    },
     {
       id: 'actions',
       header: 'Actions',
@@ -48,18 +62,120 @@ export function EventsTab({ data, onDelete }: EventsTabProps) {
           <Button
             size="sm"
             variant="destructive"
-            aria-label="Supprimer"
+            aria-label="Actions"
             onClick={() => {
-              setEventToDelete(row.original);
-              setDeleteModalOpen(true);
+              setEventToAction(row.original);
+              setPendingAction(null);
+              setChoiceOpen(true);
             }}
           >
-            <Trash className="h-4 w-4" />
+            Actions
           </Button>
         </div>
       ),
     },
   ];
+
+  // Form state pour add/edit
+  const [form, setForm] = React.useState<Omit<Event, 'id'>>({
+    name: '',
+    description: '',
+    sport: '',
+    location: '',
+    date: '',
+    image: '',
+    createdAt: '',
+    updatedAt: '',
+    isDeleted: false,
+  });
+
+  React.useEffect(() => {
+    if (sheetMode === 'edit' && selectedEvent) {
+      setForm({
+        name: selectedEvent.name,
+        description: selectedEvent.description,
+        sport: selectedEvent.sport,
+        location: selectedEvent.location,
+        date: selectedEvent.date,
+        image: selectedEvent.image,
+        createdAt: selectedEvent.createdAt,
+        updatedAt: selectedEvent.updatedAt,
+        isDeleted: selectedEvent.isDeleted,
+      });
+    } else if (sheetMode === 'add') {
+      setForm({
+        name: '',
+        description: '',
+        sport: '',
+        location: '',
+        date: '',
+        image: '',
+        createdAt: '',
+        updatedAt: '',
+        isDeleted: false,
+      });
+    }
+  }, [sheetMode, selectedEvent]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (sheetMode === 'edit' && selectedEvent) {
+      onEdit({ ...form, id: selectedEvent.id });
+    } else if (sheetMode === 'add') {
+      onAdd(form);
+    }
+    setSheetOpen(false);
+  };
+
+  // Popin de choix d'action (désactiver/supprimer)
+  const renderChoiceMenu = () => (
+    <>
+      {choiceOpen && eventToAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded shadow-lg p-6 w-full max-w-xs flex flex-col gap-4">
+            <h3 className="text-lg font-semibold mb-2">Action sur l&apos;événement</h3>
+            <Button
+              variant={'default'}
+              onClick={() => {
+                setPendingAction('disable');
+                setChoiceOpen(false);
+                setActionModalOpen(true);
+              }}
+              className="w-full"
+            >
+              {eventToAction?.isDeleted ? 'Restaurer' : 'Désactiver'}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setPendingAction('delete');
+                setChoiceOpen(false);
+                setActionModalOpen(true);
+              }}
+              className="w-full"
+            >
+              Supprimer définitivement
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setChoiceOpen(false);
+                setEventToAction(null);
+              }}
+              className="w-full"
+            >
+              Annuler
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -91,46 +207,94 @@ export function EventsTab({ data, onDelete }: EventsTabProps) {
               : 'Créez un nouvel événement.'}
           </DialogDescription>
           <div className="h-px bg-slate-200 my-4" />
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <label className="flex flex-col gap-1">
               <span className="font-medium">Titre</span>
-              <Input value={selectedEvent?.title ?? ''} readOnly className="bg-slate-100" />
+              <Input name="name" value={form.name} onChange={handleChange} required />
             </label>
             <label className="flex flex-col gap-1">
               <span className="font-medium">Date</span>
-              <Input value={selectedEvent?.date ?? ''} readOnly className="bg-slate-100" />
+              <Input
+                name="date"
+                value={form.date ? form.date.slice(0, 10) : ''}
+                onChange={handleChange}
+                required
+                type="date"
+              />
             </label>
             <label className="flex flex-col gap-1">
               <span className="font-medium">Lieu</span>
-              <Input value={selectedEvent?.lieu ?? ''} readOnly className="bg-slate-100" />
+              <Input name="location" value={form.location} onChange={handleChange} required />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="font-medium">Prix</span>
-              <Input value={selectedEvent?.price ?? ''} readOnly className="bg-slate-100" />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="font-medium">Statut</span>
-              <Input value={selectedEvent?.status ?? ''} readOnly className="bg-slate-100" />
+              <span className="font-medium">Sport</span>
+              <Input name="sport" value={form.sport} onChange={handleChange} required />
             </label>
             <label className="flex flex-col gap-1">
               <span className="font-medium">Description</span>
-              <Input value={selectedEvent?.description ?? ''} readOnly className="bg-slate-100" />
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                required
+                className="border rounded px-2 py-1 min-h-[60px]"
+              />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="font-medium">Image</span>
-              <Input value={selectedEvent?.image ?? ''} readOnly className="bg-slate-100" />
+              <span className="font-medium">Image (URL)</span>
+              <Input name="image" value={form.image || ''} onChange={handleChange} type="text" />
             </label>
+            <Button type="submit" variant="default" className="mt-4">
+              {sheetMode === 'edit' ? 'Enregistrer' : 'Créer'}
+            </Button>
           </form>
         </SheetContent>
       </Sheet>
+      {renderChoiceMenu()}
       <ConfirmDeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        onConfirm={() => {
-          if (eventToDelete) onDelete(eventToDelete);
-          setDeleteModalOpen(false);
+        open={actionModalOpen}
+        onOpenChange={open => {
+          setActionModalOpen(open);
+          if (!open) {
+            setPendingAction(null);
+            setEventToAction(null);
+          }
         }}
-        entityLabel="événement"
+        onConfirm={() => {
+          if (eventToAction && pendingAction) {
+            if (pendingAction === 'disable') {
+              onDisable(eventToAction);
+            }
+            if (pendingAction === 'delete') {
+              onDelete(eventToAction);
+            }
+          }
+          setActionModalOpen(false);
+          setPendingAction(null);
+          setEventToAction(null);
+        }}
+        entityLabel={eventToAction ? `l'événement « ${eventToAction.name} »` : 'cet événement'}
+        actionLabel={
+          pendingAction === 'disable'
+            ? eventToAction?.isDeleted
+              ? 'Restaurer'
+              : 'Désactiver'
+            : 'Supprimer définitivement'
+        }
+        actionVariant={
+          pendingAction === 'disable'
+            ? eventToAction?.isDeleted
+              ? 'default'
+              : 'destructive'
+            : 'destructive'
+        }
+        confirmMessage={
+          pendingAction === 'disable'
+            ? eventToAction?.isDeleted
+              ? `Voulez-vous vraiment restaurer l'événement « ${eventToAction?.name ?? ''} » ?`
+              : `Voulez-vous vraiment désactiver l'événement « ${eventToAction?.name ?? ''} » ?`
+            : `Voulez-vous vraiment supprimer définitivement l'événement « ${eventToAction?.name ?? ''} » ?`
+        }
       />
     </div>
   );
