@@ -1,6 +1,8 @@
 import { Response } from 'express';
 import { z } from 'zod';
 import { AuthenticatedRequest } from '../middlewares/requireAuth';
+import { getEventById } from '../services/events.service';
+import { getOfferById } from '../services/offer.service';
 import { updateUserSchema } from '../types/schemas/user';
 import { logger } from '../utils/logger';
 import { prisma } from '../utils/prisma';
@@ -12,16 +14,78 @@ import { prisma } from '../utils/prisma';
  * @param req AuthenticatedRequest (with req.user)
  * @param res Express Response
  * @returns 200 + user | 401 | 404 | 500
+ *
+ * Les tickets sont enrichis avec :
+ *   - type de pass (offer.type)
+ *   - nombre de places (offer.seats)
+ *   - event (nom, date)
+ *   - finalKey masqué (non envoyé côté front, mais dispo pour le QRCode)
  */
 export async function getMe(req: AuthenticatedRequest, res: Response): Promise<Response> {
   try {
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      select: { id: true, email: true, firstName: true, lastName: true, role: true, key1: true },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        orders: {
+          select: {
+            id: true,
+            orderItems: {
+              select: {
+                id: true,
+                offerId: true,
+                quantity: true,
+              },
+            },
+            status: true,
+            totalAmount: true,
+            createdAt: true,
+          },
+        },
+        tickets: {
+          select: {
+            id: true,
+            offerId: true,
+            finalKey: true,
+            status: true,
+            createdAt: true,
+          },
+        },
+      },
     });
     if (!user) return res.status(404).json({ error: 'User not found' });
-    return res.status(200).json(user);
+
+    // Enrich tickets with offer and event info, and mask finalKey
+    const enrichedTickets = await Promise.all(
+      user.tickets.map(async ticket => {
+        const offer = await getOfferById(ticket.offerId);
+        let event = null;
+        if (offer && offer.eventId) {
+          event = await getEventById(offer.eventId);
+        }
+        return {
+          id: ticket.id,
+          offerId: ticket.offerId,
+          status: ticket.status,
+          createdAt: ticket.createdAt,
+          // Infos enrichies
+          passType: offer?.type ?? null,
+          places: offer?.seats ?? null,
+          event: event ? { id: event.id, name: event.name, date: event.date } : null,
+          // finalKey masqué côté front (non renvoyé ici)
+        };
+      })
+    );
+
+    return res.status(200).json({
+      ...user,
+      tickets: enrichedTickets,
+    });
   } catch (err) {
     logger.error('getMe error:', err);
     return res.status(500).json({ error: 'Internal server error' });
@@ -39,7 +103,16 @@ export async function getMe(req: AuthenticatedRequest, res: Response): Promise<R
 export async function listUsers(_req: AuthenticatedRequest, res: Response): Promise<Response> {
   try {
     const users = await prisma.user.findMany({
-      select: { id: true, email: true, firstName: true, lastName: true, role: true, key1: true },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isDeleted: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return res.status(200).json(users);
   } catch (err) {
@@ -98,7 +171,16 @@ export async function updateUser(req: AuthenticatedRequest, res: Response): Prom
     const user = await prisma.user.update({
       where: { id },
       data,
-      select: { id: true, email: true, firstName: true, lastName: true, role: true, key1: true },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isDeleted: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return res.status(200).json(user);
   } catch (err) {

@@ -1,6 +1,4 @@
-import { RevenueChart } from '@/components/admin/RevenueChart';
-import { get } from '@/lib/api';
-import { useEffect } from 'react';
+import { RevenueChart, RevenueChartData } from '@/components/admin/RevenueChart';
 
 type Stat = { label: string; value: string; sub: string };
 type Sale = { name: string; email: string; amount: string };
@@ -8,16 +6,16 @@ type Sale = { name: string; email: string; amount: string };
 type DashboardTabProps = {
   stats: Stat[];
   sales: Sale[];
+  revenueChartData: RevenueChartData;
 };
 
-export function DashboardTab({ stats, sales }: DashboardTabProps) {
-  useEffect(() => {
-    const getOffers = async () => {
-      const response = await get('/offers');
-      console.log(response.data);
-    };
-    getOffers();
-  }, []);
+/**
+ * Onglet dashboard admin : stats, ventes récentes, graphique revenus
+ * @param stats Statistiques globales
+ * @param sales Ventes récentes
+ * @param revenueChartData Données du graphique revenus mensuels
+ */
+export function DashboardTab({ stats, sales, revenueChartData }: DashboardTabProps) {
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 w-full">
@@ -35,7 +33,7 @@ export function DashboardTab({ stats, sales }: DashboardTabProps) {
       <div className="flex flex-col md:flex-row gap-6 mb-8 w-full">
         <div className="bg-white rounded-lg shadow p-6 flex-1 min-w-[280px] flex flex-col justify-center">
           <h2 className="text-lg font-semibold mb-4">Revenus mensuels</h2>
-          <RevenueChart />
+          <RevenueChart data={revenueChartData} />
         </div>
         <div className="bg-white rounded-lg shadow p-6 flex-1 min-w-[280px] flex flex-col justify-start">
           <h2 className="text-lg font-semibold mb-4">Ventes récentes</h2>

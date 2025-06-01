@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import { hashPassword } from '../services/auth.service';
+import { Offer } from '../types/models/offer';
 import { prisma } from '../utils/prisma';
 
 // Admin test user
@@ -115,6 +116,43 @@ describe('Offers API', () => {
     expect(res.status).toBe(204);
     // Should not be found anymore
     const getRes = await request(app).get(`/api/offers/${offerId}`);
+    expect(getRes.status).toBe(404);
+  });
+
+  it('should soft delete an offer via PUT', async () => {
+    // Crée une nouvelle offre pour ce test
+    const createRes = await request(app)
+      .post('/api/offers')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        name: 'Soft Delete PUT',
+        description: 'Test soft delete via PUT',
+        price: '42.00',
+        type: 'SOLO',
+        seats: 5,
+      });
+    expect(createRes.status).toBe(201);
+    const putOfferId = createRes.body.id;
+    createdOfferIds.push(putOfferId);
+
+    // Soft delete via PUT
+    const putRes = await request(app)
+      .put(`/api/offers/${putOfferId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ isDeleted: true });
+    expect(putRes.status).toBe(200);
+    expect(putRes.body).toHaveProperty('isDeleted', true);
+
+    // L'offre doit être présente dans la liste avec isDeleted: true
+    const listRes = await request(app).get('/api/offers');
+    const found = (listRes.body as Offer[]).find(o => o.id === putOfferId);
+    expect(found).toBeDefined();
+    expect(found?.isDeleted).toBe(true);
+    // Optionnel : vérifier isActive si la logique métier le désactive aussi
+    // expect(found?.isActive).toBe(false);
+
+    // L'offre ne doit plus être accessible par id
+    const getRes = await request(app).get(`/api/offers/${putOfferId}`);
     expect(getRes.status).toBe(404);
   });
 });

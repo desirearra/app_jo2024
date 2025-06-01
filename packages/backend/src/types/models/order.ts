@@ -1,14 +1,26 @@
+import type { Ticket } from './ticket';
+
+/**
+ * OrderItem type (corresponds to the Prisma OrderItem model)
+ */
+export type OrderItem = {
+  id: string;
+  offerId: string;
+  orderId: string;
+  quantity: number;
+  unitPrice: string;
+  tickets: Ticket[];
+};
+
 /**
  * Order type (corresponds to the Prisma Order model)
- * Represents a purchase made by a user for an offer.
+ * Represents a purchase made by a user for one or more offers.
  */
 export type Order = {
   /** Unique order identifier (UUID) */
   id: string;
   /** User ID (UUID) */
   userId: string;
-  /** Offer ID (UUID) */
-  offerId: string;
   /** Order status */
   status: 'PENDING' | 'PAID' | 'CANCELLED' | 'REFUNDED';
   /** Transaction type (optional) */
@@ -25,4 +37,6 @@ export type Order = {
   updatedAt: string;
   /** Soft delete flag */
   isDeleted: boolean;
+  /** List of items in the order */
+  orderItems: OrderItem[];
 };

@@ -27,11 +27,21 @@ export const createEvent = async (data: {
   description: string;
   sport: string;
   location: string;
-  date: Date;
+  date: string;
   image?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }): Promise<Event> => {
-  const event = await prisma.event.create({ data });
-  return toEvent(event);
+  delete data.createdAt;
+  delete data.updatedAt;
+  data.date = new Date(data.date || '').toISOString();
+  try {
+    const event = await prisma.event.create({ data });
+    return toEvent(event);
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
 };
 
 /**
@@ -40,8 +50,13 @@ export const createEvent = async (data: {
  * @returns {Promise<Event|null>}
  */
 export const getEventById = async (id: string): Promise<Event | null> => {
-  const event = await prisma.event.findUnique({ where: { id } });
-  return event ? toEvent(event) : null;
+  try {
+    const event = await prisma.event.findUnique({ where: { id } });
+    return event ? toEvent(event) : null;
+  } catch (error) {
+    console.error('error', error);
+    return null;
+  }
 };
 
 /**
@@ -49,8 +64,17 @@ export const getEventById = async (id: string): Promise<Event | null> => {
  * @returns {Promise<Event[]>}
  */
 export const getAllEvents = async (): Promise<Event[]> => {
-  const events = await prisma.event.findMany();
-  return events.map(toEvent);
+  try {
+    const events = await prisma.event.findMany({
+      include: {
+        offers: true,
+      },
+    });
+    return events.map(toEvent);
+  } catch (error) {
+    console.error('error', error);
+    return [];
+  }
 };
 
 /**
@@ -61,9 +85,13 @@ export const getAllEvents = async (): Promise<Event[]> => {
  */
 export const updateEvent = async (id: string, data: Partial<Event>): Promise<Event | null> => {
   try {
+    delete data.createdAt;
+    delete data.updatedAt;
+    data.date = new Date(data.date || '').toISOString();
     const event = await prisma.event.update({ where: { id }, data });
     return toEvent(event);
-  } catch {
+  } catch (error) {
+    console.error('error', error);
     return null;
   }
 };
@@ -77,7 +105,8 @@ export const deleteEvent = async (id: string): Promise<boolean> => {
   try {
     await prisma.event.delete({ where: { id } });
     return true;
-  } catch {
+  } catch (error) {
+    console.error('error', error);
     return false;
   }
 };

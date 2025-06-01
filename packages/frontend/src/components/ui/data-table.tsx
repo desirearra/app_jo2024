@@ -18,24 +18,29 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder?: string;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchPlaceholder,
+  searchValue,
+  onSearchChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
 
+  const isControlled = searchValue !== undefined && onSearchChange !== undefined;
   const table = useReactTable({
     data,
     columns,
     state: {
       sorting,
       columnFilters,
-      globalFilter,
+      globalFilter: isControlled ? '' : globalFilter,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -51,8 +56,11 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4 gap-2">
         <Input
           placeholder={searchPlaceholder || 'Rechercher...'}
-          value={globalFilter ?? ''}
-          onChange={e => setGlobalFilter(e.target.value)}
+          value={searchValue !== undefined ? searchValue : globalFilter}
+          onChange={e => {
+            if (onSearchChange) onSearchChange(e.target.value);
+            else setGlobalFilter(e.target.value);
+          }}
           className="max-w-xs"
         />
       </div>

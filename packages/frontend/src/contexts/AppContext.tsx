@@ -6,6 +6,7 @@ type PassType = 'Solo' | 'Duo' | 'Familial';
 type Ticket = {
   id: string;
   eventId: string;
+  offerId: string;
   passType: PassType;
   sport: string;
   venue: string;
@@ -21,9 +22,9 @@ type Cart = {
 
 // Limites par type de pass selon la todolist
 const PASS_LIMITS: Record<PassType, number> = {
-  Solo: 1,
-  Duo: 2,
-  Familial: 4,
+  Solo: 3,
+  Duo: 3,
+  Familial: 2,
 };
 
 type AppContextType = {

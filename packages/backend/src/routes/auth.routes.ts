@@ -1,5 +1,7 @@
 import { Request, Router } from 'express';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { z } from 'zod';
+import { config } from '../config';
 import { loginFileController, verify2FAFileController } from '../controllers/auth.controller';
 import { validateRequest } from '../middlewares/validateRequest';
 import { generateUserKey1, hashPassword } from '../services/auth.service';
@@ -26,7 +28,7 @@ interface ValidatedRequest<T> extends Request {
  * @desc Register a new user
  * @access Public
  * @body RegisterData (firstName, lastName, email, password)
- * @returns 201 + user | 400 | 500
+ * @returns 201 + token | 400 | 500
  */
 router.post('/register', validateRequest(registerSchema), async (req: Request, res) => {
   // Use validated data (type-safe)
@@ -52,13 +54,18 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
     // Uses email, id and creation date (ISO string)
     const key1 = generateUserKey1(created.email, created.id, created.createdAt.toISOString());
     // 7. Update the user with key1
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: { id: created.id },
       data: { key1 },
-      select: { id: true, email: true, firstName: true, lastName: true, key1: true },
     });
-    // 8. Return the user (without password)
-    return res.status(201).json(user);
+    // 8. Générer le token JWT (comme pour le login)
+    const token = jwt.sign(
+      { userId: created.id, email: created.email, role: 'USER' },
+      config.jwt.secret,
+      { expiresIn: '1d' } as SignOptions
+    );
+    // 9. Retourner uniquement le token (jamais la clé !)
+    return res.status(201).json({ token });
   } catch (err) {
     // Technical log (server side)
     logger.error('Register error:', err);
