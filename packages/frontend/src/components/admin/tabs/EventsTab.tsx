@@ -87,6 +87,7 @@ export function EventsTab({ data, onAdd, onEdit, onDelete, onDisable }: EventsTa
     createdAt: '',
     updatedAt: '',
     isDeleted: false,
+    offers: [],
   });
 
   React.useEffect(() => {

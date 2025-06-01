@@ -20,7 +20,7 @@ export type Event = {
   location: string;
   date: string;
   image?: string | null;
-  offers: Offer[];
+  offers?: Offer[] | null;
   createdAt: string;
   updatedAt: string;
   isDeleted: boolean;
