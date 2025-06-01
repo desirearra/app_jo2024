@@ -2,10 +2,16 @@ import { z } from 'zod';
 
 /**
  * Zod schema for creating an order (POST /orders)
- * Fields: userId, offerId, totalAmount
+ * Fields: userId, items: [{ offerId, quantity }]
  */
 export const orderCreateSchema = z.object({
   userId: z.string().uuid(),
-  offerId: z.string().uuid(),
-  totalAmount: z.number().positive(),
+  items: z
+    .array(
+      z.object({
+        offerId: z.string().uuid(),
+        quantity: z.number().int().positive(),
+      })
+    )
+    .min(1),
 });
