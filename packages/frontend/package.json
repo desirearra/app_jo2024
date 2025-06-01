@@ -10,10 +10,12 @@
     "test": "jest --config jest.config.cjs",
     "test:watch": "jest --config jest.config.cjs --watch",
     "test:coverage": "jest --config jest.config.cjs --coverage",
+    "deploy": "fly deploy",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",

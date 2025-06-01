@@ -1,162 +1,93 @@
 # 📍 SITEMAP DE L'APPLICATION JO 2024
 
-## 🗺️ Vue d'ensemble de la navigation
+## 🗺️ Vue d'ensemble de la navigation (Pages principales)
 
-### 1. 🏠 Page d'accueil (/)
+### 1. 🏠 Accueil (/)
 
-- **Hero Section**
-  - Titre accrocheur
-  - Description courte
-  - Call-to-action principal
-- **Section "Comment ça marche"**
-  - Étapes d'achat
-  - Processus de validation
-- **Liste des événements récents (EventList)**
-  - 3 derniers événements
-  - Image, titre, date
-  - Lien vers détails
-- **Section CTA billetterie (OfferCTA)**
-  - Présentation des pass
-  - Bouton vers les offres
-- **Footer**
-  - Liens importants
-  - Réseaux sociaux
-  - Mentions légales
+- Hero, explication, événements récents, CTA, footer
 
-### 2. 🎫 Page des événements (/evenements)
+### 2. 🎫 Événements (/evenements)
 
-- **Système de filtres**
-  - Par sport/discipline
-  - Par date
-  - Par lieu
-- **Liste des événements**
-  - Carte par événement
-    - Image représentative
-    - Titre de l'événement
-    - Date et lieu
-    - Bouton "Découvrir l'événement"
-- **Pagination**
-  - Navigation entre les pages
-  - Nombre d'événements par page
+- Filtres, liste, pagination
 
-### 3. 🎯 Page détail événement (/evenements/:id)
+### 3. 🎯 Détail événement (/evenements/:id)
 
-- **En-tête**
-  - Image principale
-  - Titre de l'événement
-  - Description complète
-- **Informations pratiques**
-  - Date et heure
-  - Lieu
-  - Capacité
-- **Caractéristiques**
-  - Liste des équipements
-  - Services disponibles
-- **Section des pass**
-  - Pass Solo (1 personne)
-    - Prix
-    - Caractéristiques
-    - Bouton "Ajouter au panier"
-  - Pass Duo (2 personnes)
-    - Prix
-    - Caractéristiques
-    - Bouton "Ajouter au panier"
-  - Pass Familial (4 personnes)
-    - Prix
-    - Caractéristiques
-    - Bouton "Ajouter au panier"
+- Infos, offres liées, ajout panier
 
-### 4. 🛍️ Page des offres (/offres)
+### 4. 🛍️ Offres (/offres)
 
-- **Filtres**
-  - Par type de pass
-    - Solo
-    - Duo
-    - Familial
-  - Par prix
-  - Par disponibilité
-- **Liste des pass**
-  - Prix
-  - Caractéristiques
-  - Nombre de personnes
-  - Bouton "Ajouter au panier"
-- **Informations importantes**
-  - Conditions d'utilisation
-  - FAQ rapide
+- Filtres, liste, ajout panier
 
-### 5. 🛒 Page panier (/panier)
+### 5. 🛒 Panier (/panier)
 
-- **Liste des articles**
-  - Type de pass
-  - Quantité
-  - Prix unitaire
-  - Sous-total
-- **Récapitulatif**
-  - Total de la commande
-  - Timer de réservation (15min)
-- **Actions**
-  - Modifier quantités
-  - Supprimer articles
-  - Passer la commande
+- Liste, modification, validation, commande
 
 ### 6. 👤 Authentification
 
-- **Connexion (/connexion)**
-  - Formulaire de login
-  - Lien mot de passe oublié
-  - Option "Se souvenir de moi"
-- **Inscription (/inscription)**
-  - Formulaire d'inscription
-  - Validation des champs
-  - CGU et RGPD
-- **Mot de passe oublié (/mot-de-passe-oublie)**
-  - Demande de réinitialisation
-  - Confirmation par email
-- **Validation email (/validation-email)**
-  - Code de confirmation
-  - Message de succès
+- Connexion (/connexion)
+- Inscription (/inscription)
+- Mot de passe oublié (/mot-de-passe-oublie)
+- code de confirmation par email (2FA) : si admin
 
-### 7. 📱 Espace utilisateur (/compte)
+### 7. 📱 Compte utilisateur (/compte)
 
-- **Dashboard**
-  - Résumé des commandes
-  - Billets actifs
-- **Mes billets**
-  - Liste des billets
-  - QR codes
-  - Statut de validité
-- **Historique**
-  - Commandes passées
-  - Détails des transactions
-- **Paramètres**
-  - Informations personnelles
-  - Préférences
-  - Sécurité
+- Dashboard, billets, commandes
 
-### 8. 👑 Espace administrateur (/admin)
+### 8. 👑 Admin (/admin)
 
-- **Tableau de bord**
-  - KPIs principaux
-  - Alertes importantes
-- **Gestion événements**
-  - CRUD événements
-  - Planning
-- **Gestion offres**
-  - CRUD offres
-  - Stock et disponibilités
-- **Statistiques**
-  - Ventes par période
-  - Taux de conversion
-  - Rapports exportables
-- **Utilisateurs**
-  - Liste des comptes
-  - Gestion des rôles
-  - Activité suspecte
+- Dashboard, gestion événements, offres, commandes, billets, utilisateurs
 
-## 🔗 Navigation et liens
+---
 
-- Header présent sur toutes les pages
-- Footer avec liens légaux et utiles
-- Fil d'Ariane sur les pages internes
+## 🗂️ Structure technique (dossiers clés)
+
+```
+app_jo2024/
+├── packages/
+│   ├── frontend/
+│   │   ├── src/
+│   │   │   ├── assets/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── pages/
+│   │   │   ├── contexts/
+│   │   │   ├── lib/
+│   │   │   ├── types/
+│   │   │   └── utils/
+│   │   └── public/
+│   └── backend/
+│       ├── src/
+│       │   ├── config/
+│       │   ├── controllers/
+│       │   ├── middlewares/
+│       │   ├── models/
+│       │   ├── routes/
+│       │   ├── services/
+│       │   ├── types/
+│       │   └── utils/
+│       └── prisma/
+├── docker-compose.yml
+├── package.json
+├── readme.md
+├── sitemap.md
+└── ...
+```
+
+---
+
+## 🔗 Navigation et liens globaux
+
+- Header sur toutes les pages
+- Footer (liens légaux, réseaux sociaux)
+- Fil d'Ariane sur pages internes
 - Menu utilisateur connecté
-- Menu administrateur
+- Menu admin (si admin)
+
+---
+
+## 📝 Notes
+
+- Les pages sont typées, sécurisées, et accessibles.
+- Les routes API sont sous `/api/*` (auth, users, events, offers, orders, tickets).
+- L'espace admin permet le CRUD et la gestion avancée de toutes les entités.
+- Le sitemap est aligné avec la structure technique et la navigation réelle du projet.

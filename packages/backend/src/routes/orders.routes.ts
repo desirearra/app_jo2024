@@ -4,7 +4,6 @@ import {
   deleteOrder,
   getAllOrders,
   getOrderById,
-  updateOrder,
 } from '../controllers/orders.controller';
 import requireAuth from '../middlewares/requireAuth';
 import { requireRole } from '../middlewares/requireRole';
@@ -16,7 +15,7 @@ const router = Router();
  * @desc Create a new order
  * @access Admin only
  */
-router.post('/', requireAuth, requireRole(['ADMIN']), createOrder);
+router.post('/', requireAuth, requireRole(['ADMIN', 'USER']), createOrder);
 
 /**
  * @route GET /api/orders/:id
@@ -32,14 +31,6 @@ router.get('/:id', getOrderById);
  * @access Public
  */
 router.get('/', getAllOrders);
-
-/**
- * @route PUT /api/orders/:id
- * @desc Update an order
- * @param id Order ID (string)
- * @access Admin only
- */
-router.put('/:id', requireAuth, requireRole(['ADMIN']), updateOrder);
 
 /**
  * @route DELETE /api/orders/:id

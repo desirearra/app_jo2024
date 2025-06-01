@@ -5,6 +5,7 @@ import {
   getAllTicketsController,
   getTicketByIdController,
   updateTicketController,
+  verifyTicketController,
 } from '../controllers/tickets.controller';
 import requireAuth from '../middlewares/requireAuth';
 import { requireRole } from '../middlewares/requireRole';
@@ -48,5 +49,12 @@ router.put('/:id', requireAuth, requireRole(['ADMIN']), updateTicketController);
  * @access Admin only
  */
 router.delete('/:id', requireAuth, requireRole(['ADMIN']), deleteTicketController);
+
+/**
+ * @route POST /api/tickets/verify
+ * @desc Vérifie un ticket à partir de sa finalKey
+ * @access Admin only
+ */
+router.post('/verify', requireAuth, requireRole(['ADMIN']), verifyTicketController);
 
 export default router;

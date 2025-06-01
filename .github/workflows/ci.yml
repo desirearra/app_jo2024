@@ -10,6 +10,15 @@ jobs:
   test-and-lint:
     name: 🧪 Tests et Lint
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      MASTER_KEY: ${{ secrets.MASTER_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASS: ${{ secrets.SMTP_PASS }}
+      SMTP_FROM: ${{ secrets.SMTP_FROM }}
 
     services:
       postgres:
@@ -46,22 +55,12 @@ jobs:
 
       - name: 🗃️ Appliquer les migrations Prisma
         run: cd packages/backend && npx prisma migrate deploy && cd ../..
-        env:
-          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
-          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
+
+      - name: 🗃️ Enregistrer les fixtures
+        run: cd packages/backend && npm run seed --if-present
 
       - name: 🧪 Tests
         run: npm test --workspaces
-        env:
-          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
-          SHADOW_DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db_shadow
-          MASTER_KEY: dummy-master-key-for-ci
-          JWT_SECRET: dummy-jwt-secret-for-ci
-          SMTP_HOST: smtp.example.com
-          SMTP_PORT: "587"
-          SMTP_USER: test@example.com
-          SMTP_PASS: dummy
-          SMTP_FROM: noreply@example.com
 
   build:
     name: 🏗️ Build
@@ -86,12 +85,3 @@ jobs:
 
       - name: 🏗️ Build Backend
         run: npm run build --workspace=packages/backend
-        env:
-          DATABASE_URL: postgresql://jo2024:jo2024@localhost:5432/test_db
-          MASTER_KEY: dummy-master-key-for-ci
-          JWT_SECRET: dummy-jwt-secret-for-ci
-          SMTP_HOST: smtp.example.com
-          SMTP_PORT: "587"
-          SMTP_USER: test@example.com
-          SMTP_PASS: dummy
-          SMTP_FROM: noreply@example.com

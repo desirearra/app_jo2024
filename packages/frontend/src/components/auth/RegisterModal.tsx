@@ -7,9 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { RegisterForm } from '@/pages/auth/register';
-import { LogIn, UserPlus } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { RegisterForm } from './RegisterForm';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -29,7 +29,6 @@ export function RegisterModal({ isOpen, onClose, onSwitchToLogin }: RegisterModa
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <UserPlus className="text-primary" />
             <DialogTitle>Créer un compte</DialogTitle>
           </div>
           <DialogDescription>

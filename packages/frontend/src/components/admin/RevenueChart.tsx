@@ -8,12 +8,6 @@ import {
   ChartTooltipContent,
 } from '../ui/chart';
 
-const chartData = [
-  { month: 'Janvier', revenus: 1200 },
-  { month: 'Février', revenus: 2100 },
-  { month: 'Mars', revenus: 800 },
-];
-
 const chartConfig = {
   revenus: {
     label: 'Revenus',
@@ -21,14 +15,20 @@ const chartConfig = {
   },
 } as const;
 
-export function RevenueChart() {
+/**
+ * Affiche un graphique des revenus mensuels
+ * @param data Array<{ month: string; revenus: number }>
+ */
+export type RevenueChartData = { month: string; revenus: number }[];
+
+export function RevenueChart({ data }: { data: RevenueChartData }) {
   return (
     <ChartContainer
       config={chartConfig}
       className="min-h-[200px] max-h-[400px] w-full"
       data-testid="chart"
     >
-      <BarChart accessibilityLayer data={chartData}>
+      <BarChart accessibilityLayer data={data}>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />

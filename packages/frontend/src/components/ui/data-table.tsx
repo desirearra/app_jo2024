@@ -18,24 +18,29 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchPlaceholder?: string;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchPlaceholder,
+  searchValue,
+  onSearchChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
 
+  const isControlled = searchValue !== undefined && onSearchChange !== undefined;
   const table = useReactTable({
     data,
     columns,
     state: {
       sorting,
       columnFilters,
-      globalFilter,
+      globalFilter: isControlled ? '' : globalFilter,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -51,13 +56,16 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center py-4 gap-2">
         <Input
           placeholder={searchPlaceholder || 'Rechercher...'}
-          value={globalFilter ?? ''}
-          onChange={e => setGlobalFilter(e.target.value)}
+          value={searchValue !== undefined ? searchValue : globalFilter}
+          onChange={e => {
+            if (onSearchChange) onSearchChange(e.target.value);
+            else setGlobalFilter(e.target.value);
+          }}
           className="max-w-xs"
         />
       </div>
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border overflow-x-auto">
+        <Table className="min-w-[600px]">
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
@@ -92,7 +100,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between py-4 gap-2">
         <div className="text-sm text-muted-foreground">
           Page {table.getState().pagination.pageIndex + 1} sur {table.getPageCount()}
         </div>

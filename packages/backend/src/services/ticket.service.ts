@@ -9,7 +9,7 @@ import { prisma } from '../utils/prisma';
  * @param key2 Order key2
  * @returns string finalKey (hashed)
  */
-function generateFinalKey(key1: string, key2: string): string {
+export function generateFinalKey(key1: string, key2: string): string {
   // Secure: hash the concatenation with SHA-256
   return crypto.createHash('sha256').update(`${key1}:${key2}`).digest('hex');
 }
@@ -20,11 +20,15 @@ function generateFinalKey(key1: string, key2: string): string {
  * @param data - Ticket creation data (userId, orderId, status, isDeleted)
  * @returns Promise<Ticket> - The created ticket
  */
-export const createTicket = async (
-  data: Omit<Ticket, 'id' | 'createdAt' | 'updatedAt' | 'finalKey' | 'offerId'> & {
-    orderId: string;
-  }
-): Promise<Ticket> => {
+export const createTicket = async (data: {
+  userId: string;
+  offerId: string;
+  orderId: string;
+  orderItemId: string;
+  places: number;
+  status: 'ACTIVE' | 'USED' | 'CANCELLED';
+  isDeleted: boolean;
+}): Promise<Ticket> => {
   // Retrieve user key1
   const user = await prisma.user.findUnique({ where: { id: data.userId } });
   if (!user || !user.key1) throw new Error('User or key1 not found');
@@ -37,7 +41,9 @@ export const createTicket = async (
   const ticket = await prisma.ticket.create({
     data: {
       userId: data.userId,
-      offerId: order.offerId,
+      offerId: data.offerId,
+      orderItemId: data.orderItemId,
+      places: data.places,
       finalKey,
       status: data.status,
       isDeleted: data.isDeleted,

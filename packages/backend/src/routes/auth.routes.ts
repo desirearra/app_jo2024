@@ -1,6 +1,8 @@
 import { Request, Router } from 'express';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { z } from 'zod';
-import { loginFileController, verify2FAFileController } from '../controllers/auth.controller';
+import { config } from '../config';
+import { loginController, verify2FAController } from '../controllers/auth.controller';
 import { validateRequest } from '../middlewares/validateRequest';
 import { generateUserKey1, hashPassword } from '../services/auth.service';
 import { loginSchema, registerSchema, twoFAVerifySchema } from '../types/schemas/auth';
@@ -26,7 +28,7 @@ interface ValidatedRequest<T> extends Request {
  * @desc Register a new user
  * @access Public
  * @body RegisterData (firstName, lastName, email, password)
- * @returns 201 + user | 400 | 500
+ * @returns 201 + token | 400 | 500
  */
 router.post('/register', validateRequest(registerSchema), async (req: Request, res) => {
   // Use validated data (type-safe)
@@ -52,13 +54,18 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
     // Uses email, id and creation date (ISO string)
     const key1 = generateUserKey1(created.email, created.id, created.createdAt.toISOString());
     // 7. Update the user with key1
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: { id: created.id },
       data: { key1 },
-      select: { id: true, email: true, firstName: true, lastName: true, key1: true },
     });
-    // 8. Return the user (without password)
-    return res.status(201).json(user);
+    // 8. Générer le token JWT (comme pour le login)
+    const token = jwt.sign(
+      { userId: created.id, email: created.email, role: 'USER' },
+      config.jwt.secret,
+      { expiresIn: '1d' } as SignOptions
+    );
+    // 9. Retourner uniquement le token (jamais la clé !)
+    return res.status(201).json({ token });
   } catch (err) {
     // Technical log (server side)
     logger.error('Register error:', err);
@@ -73,7 +80,7 @@ router.post('/register', validateRequest(registerSchema), async (req: Request, r
  * @body LoginData (email, password)
  * @returns 200 + token | 400 | 401 | 500
  */
-router.post('/login', validateRequest(loginSchema), loginFileController);
+router.post('/login', validateRequest(loginSchema), loginController);
 
 /**
  * @route POST /api/auth/2fa/verify
@@ -82,6 +89,6 @@ router.post('/login', validateRequest(loginSchema), loginFileController);
  * @body twoFAVerifySchema (code)
  * @returns 200 | 400 | 500
  */
-router.post('/2fa/verify', validateRequest(twoFAVerifySchema), verify2FAFileController);
+router.post('/2fa/verify', validateRequest(twoFAVerifySchema), verify2FAController);
 
 export default router;

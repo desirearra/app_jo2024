@@ -7,17 +7,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { LoginForm } from '@/pages/auth/login';
-import { LogIn, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { LoginForm } from './LoginForm';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToRegister: () => void;
+  onForgotPassword: () => void;
 }
 
-export function LoginModal({ isOpen, onClose, onSwitchToRegister }: LoginModalProps) {
+export function LoginModal({
+  isOpen,
+  onClose,
+  onSwitchToRegister,
+  onForgotPassword,
+}: LoginModalProps) {
   const firstButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -29,14 +35,13 @@ export function LoginModal({ isOpen, onClose, onSwitchToRegister }: LoginModalPr
       <DialogContent className="max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <LogIn className="text-primary" />
             <DialogTitle>Connexion requise</DialogTitle>
           </div>
           <DialogDescription>
             Connectez-vous pour poursuivre votre commande ou accéder à votre compte.
           </DialogDescription>
         </DialogHeader>
-        <LoginForm onSuccess={onClose} />
+        <LoginForm onSuccess={onClose} onForgotPassword={onForgotPassword} />
         <DialogFooter className="flex flex-col gap-2">
           <Button
             ref={firstButtonRef}

@@ -38,7 +38,7 @@ export async function createOffer(
  * @returns Array of offers
  */
 export async function getAllOffers(): Promise<Offer[]> {
-  const offers = await prisma.offer.findMany({ where: { isDeleted: false } });
+  const offers = await prisma.offer.findMany();
   return offers.map(toOffer);
 }
 
@@ -82,6 +82,11 @@ export async function updateOffer(id: string, data: Partial<Offer>): Promise<Off
  * @returns The updated offer or null
  */
 export async function deleteOffer(id: string): Promise<Offer | null> {
-  const offer = await prisma.offer.update({ where: { id }, data: { isDeleted: true } });
-  return toOffer(offer);
+  try {
+    const offer = await prisma.offer.delete({ where: { id } });
+    return toOffer(offer);
+  } catch (err) {
+    console.error('Error deleting offer:', err);
+    return null;
+  }
 }

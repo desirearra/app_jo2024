@@ -1,19 +1,9 @@
-import type { User as PrismaUser } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import type { User } from '../types/models/user';
 import { prisma } from '../utils/prisma';
+import { renderOtpTemplate, sendMail } from './email.service';
 
 const SALT_ROUNDS = 10;
-
-function toUser(u: PrismaUser): User {
-  return {
-    ...u,
-    key1: u.key1 ?? undefined,
-    createdAt: u.createdAt.toISOString(),
-    updatedAt: u.updatedAt.toISOString(),
-  };
-}
 
 /**
  * Hash a password using bcrypt
@@ -61,14 +51,14 @@ export const generate2FACode = (): string => {
 };
 
 /**
- * Send a 2FA code by email (mock: console.log)
+ * Send a 2FA code by email (réel)
  * @param email User email
  * @param code 2FA code
  * @returns Promise<void>
  */
-export const send2FACodeByEmail = async (_email: string, _code: string): Promise<void> => {
-  // TODO: Replace with real email service
-  // [2FA] Send code ${_code} to ${_email}
+export const send2FACodeByEmail = async (email: string, code: string): Promise<void> => {
+  const html = renderOtpTemplate(code);
+  await sendMail(email, 'Votre code de vérification 2FA', html);
 };
 
 /**

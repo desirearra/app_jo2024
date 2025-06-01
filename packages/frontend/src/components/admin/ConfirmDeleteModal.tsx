@@ -13,6 +13,9 @@ type ConfirmDeleteModalProps = {
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
   entityLabel: string;
+  actionLabel: string;
+  actionVariant?: 'destructive' | 'default';
+  confirmMessage?: string;
 };
 
 export function ConfirmDeleteModal({
@@ -20,20 +23,25 @@ export function ConfirmDeleteModal({
   onOpenChange,
   onConfirm,
   entityLabel,
+  actionLabel,
+  actionVariant = 'destructive',
+  confirmMessage,
 }: ConfirmDeleteModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmer la suppression</DialogTitle>
+          <DialogTitle>Confirmer l&apos;action</DialogTitle>
         </DialogHeader>
-        <p>Voulez-vous vraiment supprimer cette {entityLabel} ? Cette action est irréversible.</p>
+        <p>
+          {confirmMessage ?? `Voulez-vous vraiment ${actionLabel.toLowerCase()} ${entityLabel} ?`}
+        </p>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Annuler</Button>
           </DialogClose>
-          <Button variant="destructive" onClick={onConfirm} autoFocus>
-            Supprimer
+          <Button variant={actionVariant} onClick={onConfirm} autoFocus>
+            {actionLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

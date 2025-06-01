@@ -15,4 +15,6 @@ export const createOfferSchema = z.object({
 /**
  * Zod schema for updating an offer (all fields optional)
  */
-export const updateOfferSchema = createOfferSchema.partial();
+export const updateOfferSchema = createOfferSchema.partial().extend({
+  isDeleted: z.boolean().optional(),
+});

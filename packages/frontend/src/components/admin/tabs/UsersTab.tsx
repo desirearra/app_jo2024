@@ -4,7 +4,8 @@ import { DataTable } from '@/components/ui/data-table';
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Eye, Trash } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { Eye } from 'lucide-react';
 import * as React from 'react';
 
 type User = {
@@ -12,28 +13,36 @@ type User = {
   name: string;
   email: string;
   role: string;
-  status: string;
+  isDeleted: boolean;
   createdAt: string;
-  key1: string;
 };
 
 type UsersTabProps = {
   data: User[];
   onDelete: (user: User) => void;
+  onDisable: (user: User) => void;
 };
 
-export function UsersTab({ data, onDelete }: UsersTabProps) {
+export function UsersTab({ data, onDelete, onDisable }: UsersTabProps) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<User | null>(null);
-  const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
-  const [userToDelete, setUserToDelete] = React.useState<User | null>(null);
+  const [actionModalOpen, setActionModalOpen] = React.useState(false);
+  const [userToAction, setUserToAction] = React.useState<User | null>(null);
+  const [pendingAction, setPendingAction] = React.useState<'disable' | 'delete' | null>(null);
+  const [choiceOpen, setChoiceOpen] = React.useState(false);
 
   const columns = [
     { accessorKey: 'id', header: 'ID' },
     { accessorKey: 'name', header: 'Nom' },
     { accessorKey: 'email', header: 'Email' },
     { accessorKey: 'role', header: 'Rôle' },
-    { accessorKey: 'status', header: 'Statut' },
+    {
+      accessorKey: 'isDeleted',
+      header: 'Statut',
+      cell: ({ row }: { row: { original: User } }) => (
+        <StatusBadge status={row.original.isDeleted ? 'Inactif' : 'Actif'} type="user" />
+      ),
+    },
     {
       id: 'createdAt',
       header: 'Créé le',
@@ -43,13 +52,6 @@ export function UsersTab({ data, onDelete }: UsersTabProps) {
             ? new Date(row.original.createdAt).toLocaleDateString('fr-FR')
             : '—'}
         </span>
-      ),
-    },
-    {
-      id: 'key1',
-      header: 'Clé 1 (partielle)',
-      cell: ({ row }: { row: { original: User } }) => (
-        <span className="font-mono text-xs">{row.original.key1?.slice(0, 8) || '—'}</span>
       ),
     },
     {
@@ -72,20 +74,66 @@ export function UsersTab({ data, onDelete }: UsersTabProps) {
           <Button
             size="sm"
             variant="destructive"
-            aria-label="Supprimer"
-            onClick={() => {
-              setUserToDelete(row.original);
-              setDeleteModalOpen(true);
-            }}
+            aria-label="Actions utilisateur"
             disabled={row.original.role === 'admin'}
-            title={row.original.role === 'admin' ? 'Impossible de supprimer un admin' : ''}
+            onClick={e => {
+              e.preventDefault();
+              setUserToAction(row.original);
+              setChoiceOpen(true);
+            }}
+            title={row.original.role === 'admin' ? 'Impossible de modifier un admin' : ''}
           >
-            <Trash className="h-4 w-4" />
+            Actions
           </Button>
         </div>
       ),
     },
   ];
+
+  // Menu de choix d'action (désactiver/supprimer)
+  const renderChoiceMenu = () => (
+    <>
+      {choiceOpen && userToAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded shadow-lg p-6 w-full max-w-xs flex flex-col gap-4">
+            <h3 className="text-lg font-semibold mb-2">Action sur l&apos;utilisateur</h3>
+            <Button
+              variant={'default'}
+              onClick={() => {
+                setPendingAction('disable');
+                setChoiceOpen(false);
+                setActionModalOpen(true);
+              }}
+              className="w-full"
+            >
+              {userToAction?.isDeleted ? 'Restaurer' : 'Désactiver'}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                setPendingAction('delete');
+                setChoiceOpen(false);
+                setActionModalOpen(true);
+              }}
+              className="w-full"
+            >
+              Supprimer définitivement
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setChoiceOpen(false);
+                setUserToAction(null);
+              }}
+              className="w-full"
+            >
+              Annuler
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -122,7 +170,11 @@ export function UsersTab({ data, onDelete }: UsersTabProps) {
               </div>
               <div>
                 <label className="block text-xs font-semibold mb-1">Statut</label>
-                <Input value={selectedUser.status} readOnly className="bg-slate-100" />
+                <StatusBadge
+                  status={selectedUser.isDeleted ? 'Inactif' : 'Actif'}
+                  type="user"
+                  className="w-full"
+                />
               </div>
               <div>
                 <label className="block text-xs font-semibold mb-1">Créé le</label>
@@ -136,34 +188,51 @@ export function UsersTab({ data, onDelete }: UsersTabProps) {
                   className="bg-slate-100"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold mb-1">Clé 1 (partielle)</label>
-                <Input
-                  value={selectedUser.key1?.slice(0, 8) || ''}
-                  readOnly
-                  className="bg-slate-100 font-mono text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold mb-1">Clé 1 (complète)</label>
-                <Input
-                  value={selectedUser.key1 || ''}
-                  readOnly
-                  className="bg-slate-100 font-mono text-xs"
-                />
-              </div>
             </form>
           )}
         </SheetContent>
       </Sheet>
+      {renderChoiceMenu()}
       <ConfirmDeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        onConfirm={() => {
-          if (userToDelete) onDelete(userToDelete);
-          setDeleteModalOpen(false);
+        open={actionModalOpen}
+        onOpenChange={open => {
+          setActionModalOpen(open);
+          if (!open) {
+            setPendingAction(null);
+            setUserToAction(null);
+          }
         }}
-        entityLabel="utilisateur"
+        onConfirm={() => {
+          if (userToAction && pendingAction) {
+            if (pendingAction === 'disable') onDisable(userToAction);
+            if (pendingAction === 'delete') onDelete(userToAction);
+          }
+          setActionModalOpen(false);
+          setPendingAction(null);
+          setUserToAction(null);
+        }}
+        entityLabel={userToAction ? `l'utilisateur « ${userToAction.name} »` : 'cet utilisateur'}
+        actionLabel={
+          pendingAction === 'disable'
+            ? userToAction?.isDeleted
+              ? 'Restaurer'
+              : 'Désactiver'
+            : 'Supprimer définitivement'
+        }
+        actionVariant={
+          pendingAction === 'disable'
+            ? userToAction?.isDeleted
+              ? 'default'
+              : 'destructive'
+            : 'destructive'
+        }
+        confirmMessage={
+          pendingAction === 'disable'
+            ? userToAction?.isDeleted
+              ? `Voulez-vous vraiment restaurer l'utilisateur « ${userToAction?.name ?? ''} » ?`
+              : `Voulez-vous vraiment désactiver l'utilisateur « ${userToAction?.name ?? ''} » ?`
+            : `Voulez-vous vraiment supprimer définitivement l'utilisateur « ${userToAction?.name ?? ''} » ?`
+        }
       />
     </div>
   );

@@ -17,105 +17,65 @@
 
 ## Résumé
 
-Cette PR apporte une refonte majeure du backend :
+Cette PR apporte une **intégration complète entre le frontend et le backend**, ainsi qu'une refonte majeure de l'admin, de la gestion des entités et de la sécurité :
 
-- **Ajout du 2FA par email pour les admins**
-- **Refactorisation complète des tests d'intégration**
-- **Amélioration de la sécurité, de la couverture et de la documentation**
-
----
-
-## 🛡️ Authentification & Sécurité (2FA Admin)
-
-### Fonctionnalités principales
-
-- **Double authentification (2FA) par email pour les administrateurs**
-  - Lors de la connexion, un code à 6 chiffres est généré et envoyé par email (mocké en console pour l'instant).
-  - L'admin doit valider ce code via une route dédiée pour obtenir son token JWT.
-- **Sécurité renforcée**
-  - Le code 2FA et sa date d'expiration sont stockés temporairement en base de données.
-  - Le code est à usage unique et expire après quelques minutes.
-
-### Endpoints API
-
-- `POST /api/auth/login`
-  - Utilisateur classique : login direct (JWT)
-  - Admin : déclenche l'envoi du code 2FA, réponse `2FA_REQUIRED`
-- `POST /api/auth/2fa/verify`
-  - Vérifie le code 2FA (email + code), retourne le JWT si OK
-
-### Exemple de flow 2FA admin
-
-1. **Connexion**
-
-   ```http
-   POST /api/auth/login
-   {
-     "email": "admin@example.com",
-     "password": "SuperSecret123!"
-   }
-   ```
-
-   → Réponse : `202 2FA_REQUIRED` (code envoyé par email)
-
-2. **Vérification du code**
-   ```http
-   POST /api/auth/2fa/verify
-   {
-     "email": "admin@example.com",
-     "code": "123456"
-   }
-   ```
-   → Réponse : `200 OK` + JWT
-
-### Schéma de données
-
-- Ajout des champs suivants au modèle `User` :
-  - `twoFACode: String?` — Code 2FA temporaire
-  - `twoFAExpiresAt: DateTime?` — Expiration du code
+- Connexion du frontend à l'API backend (helpers, types, endpoints)
+- Refonte des services, contrôleurs et schémas backend pour intégration totale
+- Harmonisation des contextes (AppContext, AuthContext)
+- CRUD complet et suppression hard/soft pour toutes les entités (offres, événements, commandes, utilisateurs, billets)
+- Cascade delete (suppression d'une commande supprime orderItems et tickets)
+- Gestion du stock d'offres (vérification et décrémentation atomique)
+- Refonte des flows d'authentification (login, register, 2FA, forgot password)
+- UI/UX harmonisée (landing, offres, admin, feedback, StatusBadge, toasts)
+- Refactorisation et enrichissement des tests (backend & frontend)
+- Documentation technique et MCD à jour
 
 ---
 
-## 📝 Détail des autres changements
+## Détail des principaux commits
 
-- Refactorisation de tous les tests d'intégration pour supporter le 2FA admin (helpers, login, etc.)
-- Correction des helpers de login admin dans tous les tests (users, offers, tickets…)
-- Correction des erreurs de typage (types explicites, suppression des any)
-- Couverture de tests > 85% (seuil temporairement abaissé à 60% pour branches)
-- Documentation Swagger enrichie pour tous les endpoints (auth, users, offers, tickets)
-- JSDoc sur tous les services, contrôleurs et schémas
-- Mise à jour du schéma Prisma (champs 2FA, relations, enums)
-- Migration de la base de données
-- Nettoyage et organisation des fichiers de tests
+- **feat(prisma):** update schema for cascade deletes and offer places
+- **feat(backend):** refactor services and controllers for full frontend-backend integration
+- **feat(types):** update backend types and zod schemas for strict validation
+- **test(backend):** update and add tests for new order, offer, user, and ticket flows
+- **feat(frontend):** connect API helpers and types to backend endpoints
+- **feat(context):** harmonize AppContext and AuthContext for backend integration
+- **feat(admin):** enable hard delete, feedback, and cascade for all entities
+- **feat(auth):** refactor login, register, 2FA, and forgot password flows
+- **refactor(ui):** harmonize landing, offers, and UI components
+- **test(frontend):** update and add tests for new frontend-backend flows
+- **refactor(auth):** remove legacy auth pages and dead code
+- **docs:** update documentation and add missing helpers/types (final cleanup)
 
 ---
 
 ## 🧪 Tests
 
-- [x] Tests unitaires
-- [x] Tests d'intégration
-- [x] Tests manuels
-- [x] Couverture > 85% (branches > 60%)
+- [x] Tests unitaires backend & frontend
+- [x] Tests d'intégration backend
+- [x] Tests manuels sur tous les flows critiques
 
 ---
 
 ## 📚 Documentation
 
-- [x] Documentation du code
-- [x] Documentation technique (Swagger, README)
-- [x] Commentaires JSDoc à jour
+- [x] README et MCD à jour
+- [x] Sitemap et flows documentés
+- [x] JSDoc sur les services et schémas
 
 ---
 
 ## ⚡ Breaking Changes
 
-- Aucun breaking change majeur, mais le flow d'authentification admin change (2FA obligatoire)
+- Suppression des anciennes pages d'authentification
+- Changement du flow de suppression (hard/soft + cascade)
+- Nouvelle gestion du stock et des statuts
 
 ---
 
 ## 📦 Dépendances
 
-- Ajout de dépendances pour la gestion du 2FA et la sécurité (ex: nodemailer à venir, bcrypt, etc.)
+- Mise à jour des dépendances backend et frontend pour l'intégration
 - Migration Prisma appliquée
 
 ---
@@ -142,18 +102,16 @@ Related to BACK-1, BACK-2, BACK-3
 
 ## 🔍 Points d'attention
 
-- Le seuil de couverture branches a été abaissé à 60% temporairement pour permettre la livraison rapide.  
-  **À remonter à 80% après validation de la PR** (tests à compléter).
-- Le code 2FA admin est mocké en console pour l'instant (pas d'envoi réel d'email).
+- Vérifier la gestion du stock et des statuts en production
 
 ---
 
 ## 🔜 Prochaines étapes
 
-1. Remonter le seuil de couverture après ajout de tests sur les branches manquantes
-2. QA fonctionnelle et sécurité
-3. Déploiement en staging
+1. Déploiement en staging
+2. Test fonctionnel et sécurité
+3. Déploiement en production
 
 ---
 
-Cette PR prépare le terrain pour la suite du développement backend en mettant en place des bases solides en termes de qualité de code, de sécurité et de maintenabilité.
+Prêt pour review et merge sur `develop` 🚦
