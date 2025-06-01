@@ -208,3 +208,17 @@ PostgreSQL via Docker :
 2. Review de code via codeRabit
 3. Tests automatisés dans la CI
 4. Déploiement automatique sur Heroku
+
+## Génération de la clé finale (finalKey) des tickets
+
+Chaque ticket possède une clé unique `finalKey` générée ainsi :
+
+- `finalKey = SHA-256(user.key1 + ':' + key2 + ':' + orderItem.id + ':' + idx)`
+  - `user.key1` : clé unique de l'utilisateur
+  - `key2` : clé unique de la commande
+  - `orderItem.id` : identifiant unique de l'item de commande
+  - `idx` : index du ticket dans l'item (pour gérer les quantités)
+
+Cela garantit l'unicité de chaque ticket, même pour plusieurs tickets sur la même commande/offre.
+
+**Référence :** voir `orders.service.ts` (création des tickets)

@@ -8,7 +8,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 export default function RootLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const [authOpen, setAuthOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 
@@ -68,20 +68,33 @@ export default function RootLayout() {
                   </Button>
                   {accountMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                      <button
-                        className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                        onClick={() => {
-                          setAccountMenuOpen(false);
-                          navigate('/compte');
-                        }}
-                      >
-                        Profil & commandes
-                      </button>
+                      {user?.role === 'admin' || user?.role === 'ADMIN' ? (
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onClick={() => {
+                            setAccountMenuOpen(false);
+                            navigate('/admin');
+                          }}
+                        >
+                          Tableau de bord
+                        </button>
+                      ) : (
+                        <button
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onClick={() => {
+                            setAccountMenuOpen(false);
+                            navigate('/compte');
+                          }}
+                        >
+                          Profil & commandes
+                        </button>
+                      )}
                       <button
                         className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                         onClick={() => {
                           setAccountMenuOpen(false);
                           logout();
+                          navigate('/');
                         }}
                       >
                         Se déconnecter

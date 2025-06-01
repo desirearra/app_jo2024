@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { CartWidget } from '../../components/ui/CartWidget';
 import { AppProvider } from '../../contexts/AppContext';
