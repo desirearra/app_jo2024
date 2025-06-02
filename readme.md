@@ -122,7 +122,6 @@ Documentation interactive complète : `/api/docs` (Swagger UI)
 - Modales accessibles (actions, confirmations)
 - Toasts pour feedback utilisateur
 - Responsive et mobile-first
-- A11y : focus, contrastes, ARIA
 
 ---
 
@@ -158,14 +157,29 @@ yarn seed
 
 # Démarrage du frontend et du backend
 yarn dev
+
+# Démarrage des tests depuis la racine du projet
+yarn test
 ```
 
-### Variables d'Environnement
+### Variables d'Environnement backend
 
 - `PORT`: Port du serveur (défaut: 3000)
+- `NODE_ENV`: Environnement de développement (défaut: development)
 - `DATABASE_URL`: URL de connexion PostgreSQL
+- `SHADOW_DATABASE_URL`: URL de connexion PostgreSQL (shadow pour les tests)
 - `JWT_SECRET`: Clé secrète pour JWT
 - `JWT_EXPIRES_IN`: Durée de validité des tokens
+- `MASTER_KEY`: Clé secrète pour les tickets
+- `SMTP_HOST`: Hôte SMTP
+- `SMTP_PORT`: Port SMTP
+- `SMTP_USER`: Nom d'utilisateur SMTP
+- `SMTP_PASS`: Mot de passe SMTP
+- `SMTP_FROM`: Adresse de l'expéditeur
+
+### Variables d'Environnement frontend
+
+- `VITE_API_URL`: URL de l'API backend (défaut: http://localhost:3000)
 
 ---
 
